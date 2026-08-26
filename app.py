@@ -307,21 +307,11 @@ for r in range(3):
 
             # 画像をセル幅に自動フィットさせる（横幅100%）
             st.image(data["img_url"], use_container_width=True)
-            st.markdown(
-                f"""<div style="font-size: 10px; background: {bg_color}; border: 1px solid {border_color}; border-radius: 4px; text-align: center; padding: 2px; margin-top: 2px;">
-                      <b>{data['name']}</b><br>HP:{data['hp']}
-                  </div>""",
-                unsafe_allow_html=True,
-            )
+            
           else:
             # 敵の表示
             st.image(data["img_url"], use_container_width=True)
-            st.markdown(
-                f"""<div style="font-size: 10px; background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; text-align: center; padding: 2px; margin-top: 2px;">
-                      <b>{data['name']}</b><br>HP:{data['hp']}
-                  </div>""",
-                unsafe_allow_html=True,
-            )
+            
 st.markdown("---")
 
 # --- フェーズごとの処理 ---
