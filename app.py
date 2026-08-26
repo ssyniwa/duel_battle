@@ -72,7 +72,7 @@ if "initialized" not in st.session_state:
           "hp": 45,
           "max_hp": 45,
           "pos": (2, 1),
-          "img_url": "images/knight.jpg",
+          "img_url": "images/rogue.jpg",
           "cards": [
               {
                   "type": "move",
@@ -80,7 +80,7 @@ if "initialized" not in st.session_state:
                   "dr": 1,
                   "dc": 0,
                   "desc": "真下に1マス素早く回り込む。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/rogue.jpg",
               },
               {
                   "type": "attack",
@@ -88,7 +88,7 @@ if "initialized" not in st.session_state:
                   "range": [(0, 2)],
                   "damage": 30,
                   "desc": "2マス先の敵の急所を突く一撃。",
-                  "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+                  "img_url": "images/rogue_skill1.jpg",
               },
           ],
       },
