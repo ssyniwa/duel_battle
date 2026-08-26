@@ -244,7 +244,7 @@ def add_log(msg):
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
 
-st.title("⚔️ タクティカル・デュエルバトル (画像ビジュアル版)")
+st.title("⚔️ タクティカル・デュエルバトル (標準関数画像版)")
 
 if not living_enemies:
   st.success("🎉 【勝利】すべての敵を撃破しました！")
@@ -260,62 +260,67 @@ if not living_players:
     st.rerun()
   st.stop()
 
-# --- 3×6 バトルフィールドの視覚化 (カスタムHTMLグリッド) ---
+# --- 3×6 バトルフィールドの描画 (Streamlitのカラムを活用) ---
 st.subheader("🗺️ 戦場マップ (3行 × 6列)")
 
-# 3x6の空マス配列を準備
-grid_data = [["" for _ in range(6)] for _ in range(3)]
+# グリッドの作成 (3行 × 6列をマッピング)
+grid_map = [[None for _ in range(6)] for _ in range(3)]
 
-# 敵の配置をセット
-for e in living_enemies:
-  r, c = e["pos"]
-  grid_data[r][
-      c
-  ] = f"""<div style="background-color: #ffebee; border: 2px solid #ef5350; border-radius: 6px; padding: 5px; text-align: center;">
-        <img src="{e['img_url']}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-        <div style="font-size: 11px; font-weight: bold; color: #c62828;">👹 {e['name']}</div>
-        <div style="font-size: 10px; color: #d32f2f;">HP: {e['hp']}</div>
-    </div>"""
-
-# プレイヤーの配置をセット
 for p in living_players:
   r, c = p["pos"]
-  is_current = (
-      st.session_state.turn_phase == "player_turn"
-      and living_players[
-          st.session_state.current_actor_idx % len(living_players)
-      ]["id"]
-      == p["id"]
-  )
-  border_color = "#2e7d32" if not is_current else "#ff9800"
-  bg_color = "#e8f5e9" if not is_current else "#fff3e0"
-  badge = "👉行動中" if is_current else "🛡️味方"
+  grid_map[r][c] = ("player", p)
 
-  grid_data[r][
-      c
-  ] = f"""<div style="background-color: {bg_color}; border: 2px solid {border_color}; border-radius: 6px; padding: 5px; text-align: center;">
-        <img src="{p['img_url']}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-        <div style="font-size: 11px; font-weight: bold; color: #2e7d32;">{p['name']}</div>
-        <div style="font-size: 10px; color: #388e3c;">HP: {p['hp']} | {badge}</div>
-    </div>"""
+for e in living_enemies:
+  r, c = e["pos"]
+  grid_map[r][c] = ("enemy", e)
 
-# HTMLテーブルとして3x6グリッドを描画
-table_html = (
-    '<table style="width:100%; border-collapse: collapse; text-align: center;">'
-)
+# Streamlitの行とカラムを使って綺麗にグリッドを描画
 for r in range(3):
-  table_html += "<tr>"
+  cols = st.columns(6)
   for c in range(6):
-    cell_content = (
-        grid_data[r][c]
-        if grid_data[r][c] != ""
-        else '<div style="color: #ccc; padding: 15px;">・</div>'
-    )
-    table_html += f'<td style="border: 1px solid #ddd; width: 16.6%; vertical-align: middle; height: 90px;">{cell_content}</td>'
-  table_html += "</tr>"
-table_html += "</table>"
+    with cols[c]:
+      cell_content = grid_map[r][c]
+      if cell_content is None:
+        # 空マス
+        st.markdown(
+            f"""
+                <div style="border: 1px dashed #ddd; height: 90px; display: flex; align-items: center; justify-content: center; color: #ccc; border-radius: 4px;">
+                    ({r},{c})
+                </div>
+                """,
+            unsafe_allow_html=True,
+        )
+      else:
+        entity_type, data = cell_content
+        if entity_type == "player":
+          is_current = (
+              st.session_state.turn_phase == "player_turn"
+              and living_players[
+                  st.session_state.current_actor_idx % len(living_players)
+              ]["id"]
+              == data["id"]
+          )
+          border_color = "orange" if is_current else "green"
+          bg_color = "#fff3e0" if is_current else "#e8f5e9"
 
-st.markdown(table_html, unsafe_allow_html=True)
+          # Streamlit標準関数でプレイヤー画像と情報を表示
+          st.image(data["img_url"], width=40)
+          st.markdown(
+              f"""<div style="font-size: 10px; background: {bg_color}; border: 1px solid {border_color}; border-radius: 4px; text-align: center; padding: 2px;">
+                    <b>{data['name']}</b><br>HP:{data['hp']}
+                </div>""",
+              unsafe_allow_html=True,
+          )
+        else:
+          # 敵の表示
+          st.image(data["img_url"], width=40)
+          st.markdown(
+              f"""<div style="font-size: 10px; background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; text-align: center; padding: 2px;">
+                    <b>{data['name']}</b><br>HP:{data['hp']}
+                </div>""",
+              unsafe_allow_html=True,
+          )
+
 st.markdown("---")
 
 # --- フェーズごとの処理 ---
@@ -326,8 +331,8 @@ if st.session_state.turn_phase == "player_turn":
 
   col_info, col_action = st.columns([1, 3])
   with col_info:
-    st.markdown("### 👤 手番キャラ")
-    st.image(current_p["img_url"], width=80)
+    st.markdown("### 👤 現在の行動キャラ")
+    st.image(current_p["img_url"], width=70)
     st.markdown(
         f"**{current_p['name']}**<br>HP: {current_p['hp']}/{current_p['max_hp']}",
         unsafe_allow_html=True,
@@ -344,91 +349,76 @@ if st.session_state.turn_phase == "player_turn":
     )
     target_enemy = enemy_options[selected_enemy_label]
 
-  st.markdown("#### 🃏 スキルカード選択（画像付きTCGカード）")
+  st.markdown("#### 🃏 スキルカード選択")
 
   card_cols = st.columns(len(current_p["cards"]))
 
   for idx, card in enumerate(current_p["cards"]):
     with card_cols[idx]:
-      # 画像つきTCGカードのデザイン (HTML)
-      card_html = f"""
-            <div style="
-                border: 2px solid #3f51b5;
-                border-radius: 10px;
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-                color: #333;
-                box-shadow: 0px 4px 6px rgba(0,0,0,0.15);
-                overflow: hidden;
-                height: 240px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                margin-bottom: 10px;
-            ">
-                <div>
-                    <div style="background: #3f51b5; color: white; font-size: 10px; font-weight: bold; padding: 3px 6px; text-align: right;">
-                        {'[移動]' if card['type']=='move' else '[攻撃]'}
-                    </div>
-                    <div style="padding: 6px;">
-                        <div style="font-size: 13px; font-weight: bold; color: #1a237e; margin-bottom: 4px;">{card['name']}</div>
-                        <img src="{card['img_url']}" style="width: 100%; height: 75px; object-fit: cover; border-radius: 4px;">
-                    </div>
-                </div>
-                <div style="padding: 0 6px 6px 6px; font-size: 11px; color: #333; line-height: 1.2;">
-                    {card['desc']}<br>
-                    {'<b>威力:</b> ' + str(card['damage']) if card['type']=='attack' else ''}
-                </div>
-            </div>
-            """
-      st.markdown(card_html, unsafe_allow_html=True)
+      # Streamlit標準のコンテナと画像・テキスト表示を使ったカードUI
+      with st.container(border=True):
+        st.markdown(
+            f"**{'[移動]' if card['type']=='move' else '[攻撃]'} {card['name']}**"
+        )
+        st.image(card["img_url"], use_container_width=True)
+        st.markdown(
+            f"<div style='font-size: 12px;'>{card['desc']}</div>",
+            unsafe_allow_html=True,
+        )
+        if card["type"] == "attack":
+          st.markdown(
+              f"<div style='font-size: 12px; color: #d32f2f;'><b>威力:</b>"
+              f" {card['damage']}</div>",
+              unsafe_allow_html=True,
+          )
 
-      # カード使用ボタン
-      if st.button("このカードを使う", key=f"card_{current_p['id']}_{idx}"):
-        if card["type"] == "move":
-          pr, pc = current_p["pos"]
-          nr, nc = pr + card["dr"], pc + card["dc"]
-          if 0 <= nr < 3 and 0 <= nc < 6:
-            occupied = any(
-                p["pos"] == (nr, nc) for p in st.session_state.players
-            ) or any(e["pos"] == (nr, nc) for e in st.session_state.enemies)
-            if not occupied:
-              current_p["pos"] = (nr, nc)
+        # カード使用ボタン
+        if st.button("このカードを使う", key=f"card_{current_p['id']}_{idx}"):
+          if card["type"] == "move":
+            pr, pc = current_p["pos"]
+            nr, nc = pr + card["dr"], pc + card["dc"]
+            if 0 <= nr < 3 and 0 <= nc < 6:
+              occupied = any(
+                  p["pos"] == (nr, nc) for p in st.session_state.players
+              ) or any(e["pos"] == (nr, nc) for e in st.session_state.enemies)
+              if not occupied:
+                current_p["pos"] = (nr, nc)
+                add_log(
+                    f"🏃 {current_p['name']} は '{card['name']}' で"
+                    f" ({nr}, {nc}) に移動しました。"
+                )
+              else:
+                add_log(f"⚠️ そのマスには既にキャラクターがいます。")
+            else:
+              add_log(f"⚠️ マップの範囲外へは移動できません。")
+
+          elif card["type"] == "attack":
+            pr, pc = current_p["pos"]
+            er, ec = target_enemy["pos"]
+            valid_hit = any(
+                (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
+            )
+
+            if valid_hit:
+              target_enemy["hp"] -= card["damage"]
+              if target_enemy["hp"] < 0:
+                target_enemy["hp"] = 0
               add_log(
-                  f"🏃 {current_p['name']} は '{card['name']}' で"
-                  f" ({nr}, {nc}) に移動した！"
+                  f"✨ {current_p['name']} の '{card['name']}' が"
+                  f" {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
               )
             else:
-              add_log(f"⚠️ そのマスには既にキャラクターが存在します。")
-          else:
-            add_log(f"⚠️ マップの範囲外へは移動できません。")
+              add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
 
-        elif card["type"] == "attack":
-          pr, pc = current_p["pos"]
-          er, ec = target_enemy["pos"]
-          valid_hit = any(
-              (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
-          )
-
-          if valid_hit:
-            target_enemy["hp"] -= card["damage"]
-            if target_enemy["hp"] < 0:
-              target_enemy["hp"] = 0
+          # ターン進行
+          st.session_state.current_actor_idx += 1
+          if st.session_state.current_actor_idx >= len(living_players):
+            st.session_state.turn_phase = "enemy_turn"
+            st.session_state.current_actor_idx = 0
             add_log(
-                f"✨ {current_p['name']} の '{card['name']}' が"
-                f" {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
+                "🔄 プレイヤー全員の行動終了。敵の反撃ターンに移行します！"
             )
-          else:
-            add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
-
-        # ターン進行
-        st.session_state.current_actor_idx += 1
-        if st.session_state.current_actor_idx >= len(living_players):
-          st.session_state.turn_phase = "enemy_turn"
-          st.session_state.current_actor_idx = 0
-          add_log(
-              "🔄 プレイヤー全員の行動終了。敵の反撃ターンに移行します！"
-          )
-        st.rerun()
+          st.rerun()
 
   if st.button("このキャラクターの行動をパスする"):
     add_log(f"💤 {current_p['name']} はその場で待機しました。")
