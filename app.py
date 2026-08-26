@@ -46,7 +46,7 @@ if "initialized" not in st.session_state:
           "hp": 60,
           "max_hp": 60,
           "pos": (1, 1),
-          "img_url": "images/knight.jpg",
+          "img_url": "images/warrior.jpg",
           "cards": [
               {
                   "type": "move",
@@ -54,7 +54,7 @@ if "initialized" not in st.session_state:
                   "dr": 0,
                   "dc": 1,
                   "desc": "前方に1マス素早く移動。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/warrior.jpg",
               },
               {
                   "type": "attack",
@@ -62,7 +62,7 @@ if "initialized" not in st.session_state:
                   "range": [(-1, 1), (0, 1), (1, 1)],
                   "damage": 20,
                   "desc": "前方の3マスを同時に攻撃する。",
-                  "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
+                  "img_url": "images/warrior_skill1.jpg",
               },
           ],
       },
