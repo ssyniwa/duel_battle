@@ -182,7 +182,6 @@ if st.button("行動をパスする"):
   ) % len(living_players)
   st.rerun()
 
----
 
 # --- バトルログ ---
 st.subheader("📜 バトルログ")
