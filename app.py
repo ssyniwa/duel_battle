@@ -110,7 +110,7 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "ファイアボール",
+                  "name": "メテオストライク",
                   "range": [(0, 2), (0, 3)],
                   "damage": 35,
                   "desc": "遠く離れた2〜3マス先の敵を焼く。",
