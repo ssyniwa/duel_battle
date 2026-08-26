@@ -124,7 +124,7 @@ if "initialized" not in st.session_state:
           "hp": 40,
           "max_hp": 40,
           "pos": (1, 1),
-          "img_url": "images/knight.jpg",
+          "img_url": "images/archer.jpg",
           "cards": [
               {
                   "type": "move",
@@ -132,7 +132,7 @@ if "initialized" not in st.session_state:
                   "dr": 0,
                   "dc": -1,
                   "desc": "後方に1マス下がって距離を取る。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/archer.jpg",
               },
               {
                   "type": "attack",
@@ -140,7 +140,7 @@ if "initialized" not in st.session_state:
                   "range": [(0, 2), (0, 3)],
                   "damage": 25,
                   "desc": "直線上の遠くの敵を正確に射抜く。",
-                  "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+                  "img_url": "images/archer_skill1.jpg",
               },
           ],
       },
