@@ -19,7 +19,7 @@ if "initialized" not in st.session_state:
           "name": "ナイト",
           "hp": 70,
           "max_hp": 70,
-          "pos": (0, 1),
+          "pos": (0, 2),
           "img_url": "images/knight.jpg",
           "cards": [
               {
@@ -45,7 +45,7 @@ if "initialized" not in st.session_state:
           "name": "ウォーリア",
           "hp": 60,
           "max_hp": 60,
-          "pos": (1, 1),
+          "pos": (1, 2),
           "img_url": "images/warrior.jpg",
           "cards": [
               {
@@ -71,7 +71,7 @@ if "initialized" not in st.session_state:
           "name": "ローグ",
           "hp": 45,
           "max_hp": 45,
-          "pos": (2, 1),
+          "pos": (2, 2),
           "img_url": "images/rogue.jpg",
           "cards": [
               {
@@ -97,7 +97,7 @@ if "initialized" not in st.session_state:
           "name": "メイジ",
           "hp": 35,
           "max_hp": 35,
-          "pos": (0, 2),
+          "pos": (0, 1),
           "img_url": "images/knight.jpg",
           "cards": [
               {
@@ -123,7 +123,7 @@ if "initialized" not in st.session_state:
           "name": "アーチャー",
           "hp": 40,
           "max_hp": 40,
-          "pos": (1, 2),
+          "pos": (1, 1),
           "img_url": "images/knight.jpg",
           "cards": [
               {
@@ -149,7 +149,7 @@ if "initialized" not in st.session_state:
           "name": "プリースト",
           "hp": 50,
           "max_hp": 50,
-          "pos": (2, 2),
+          "pos": (2, 1),
           "img_url": "images/knight.jpg",
           "cards": [
               {
