@@ -150,7 +150,7 @@ if "initialized" not in st.session_state:
           "hp": 50,
           "max_hp": 50,
           "pos": (2, 1),
-          "img_url": "images/knight.jpg",
+          "img_url": "images/priest.jpg",
           "cards": [
               {
                   "type": "move",
@@ -158,7 +158,7 @@ if "initialized" not in st.session_state:
                   "dr": 0,
                   "dc": 1,
                   "desc": "前方に1マス進む。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/priest.jpg",
               },
               {
                   "type": "attack",
@@ -166,7 +166,7 @@ if "initialized" not in st.session_state:
                   "range": [(0, 1)],
                   "damage": 10,
                   "desc": "前方の敵へ神聖な光でダメージ。",
-                  "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
+                  "img_url": "images/priest_skill1.jpg",
               },
           ],
       },
