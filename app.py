@@ -19,7 +19,7 @@ if "initialized" not in st.session_state:
           "name": "ナイト",
           "hp": 70,
           "max_hp": 70,
-          "pos": (0, 0),
+          "pos": (0, 1),
           "img_url": "images/knight.jpg",
           "cards": [
               {
@@ -45,8 +45,8 @@ if "initialized" not in st.session_state:
           "name": "ウォーリア",
           "hp": 60,
           "max_hp": 60,
-          "pos": (1, 0),
-          "img_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+          "pos": (1, 1),
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
@@ -71,8 +71,8 @@ if "initialized" not in st.session_state:
           "name": "ローグ",
           "hp": 45,
           "max_hp": 45,
-          "pos": (2, 0),
-          "img_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+          "pos": (2, 1),
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
@@ -97,8 +97,8 @@ if "initialized" not in st.session_state:
           "name": "メイジ",
           "hp": 35,
           "max_hp": 35,
-          "pos": (0, 1),
-          "img_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
+          "pos": (0, 2),
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
@@ -123,8 +123,8 @@ if "initialized" not in st.session_state:
           "name": "アーチャー",
           "hp": 40,
           "max_hp": 40,
-          "pos": (1, 1),
-          "img_url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
+          "pos": (1, 2),
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
@@ -149,8 +149,8 @@ if "initialized" not in st.session_state:
           "name": "プリースト",
           "hp": 50,
           "max_hp": 50,
-          "pos": (2, 1),
-          "img_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
+          "pos": (2, 2),
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
