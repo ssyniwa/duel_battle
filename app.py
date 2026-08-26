@@ -107,7 +107,7 @@ for p in living_players:
 # 表形式で表示
 st.table(grid)
 
----
+
 
 # --- ターン制・行動選択UI ---
 current_p = living_players[
