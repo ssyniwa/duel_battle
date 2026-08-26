@@ -20,7 +20,7 @@ if "initialized" not in st.session_state:
           "hp": 70,
           "max_hp": 70,
           "pos": (0, 0),
-          "img_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+          "img_url": "images/knight.jpg",
           "cards": [
               {
                   "type": "move",
@@ -28,7 +28,7 @@ if "initialized" not in st.session_state:
                   "dr": 0,
                   "dc": 1,
                   "desc": "前方に1マス移動します。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/knight.jpg",
               },
               {
                   "type": "attack",
@@ -36,7 +36,7 @@ if "initialized" not in st.session_state:
                   "range": [(0, 1)],
                   "damage": 15,
                   "desc": "目前の敵を盾で殴りつける。",
-                  "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+                  "img_url": "images/knight_skill1.jpg",
               },
           ],
       },
