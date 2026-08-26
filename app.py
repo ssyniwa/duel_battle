@@ -171,18 +171,62 @@ if "initialized" not in st.session_state:
           ],
       },
   ]
-  # 敵キャラ6体 (右側エリア: col 4 or 5)
+  # 敵キャラ6体（異なる役職・モンスターの構成）
   st.session_state.enemies = [
       {
-          "id": i,
-          "name": f"ゴブリン {i+1}",
+          "id": 0,
+          "name": "ゴブリン・ガード",
+          "hp": 55,
+          "max_hp": 55,
+          "pos": (0, 3),
+          "damage": 10,
+          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+      },
+      {
+          "id": 1,
+          "name": "ゴブリン・ソルジャー",
           "hp": 45,
           "max_hp": 45,
-          "pos": (i % 3, 4 + (i // 3)),
+          "pos": (1, 3),
+          "damage": 15,
+          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+      },
+      {
+          "id": 2,
+          "name": "ゴブリン・アサシン",
+          "hp": 35,
+          "max_hp": 35,
+          "pos": (2, 3),
           "damage": 12,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
-      }
-      for i in range(6)
+      },
+      {
+          "id": 3,
+          "name": "ゴブリン・シャーマン",
+          "hp": 30,
+          "max_hp": 30,
+          "pos": (0, 4),
+          "damage": 14,
+          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+      },
+      {
+          "id": 4,
+          "name": "オーク・バーサーカー",
+          "hp": 70,
+          "max_hp": 70,
+          "pos": (1, 4),
+          "damage": 20,
+          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+      },
+      {
+          "id": 5,
+          "name": "ダーク・アーチャー",
+          "hp": 35,
+          "max_hp": 35,
+          "pos": (2, 4),
+          "damage": 16,
+          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+      },
   ]
 
   st.session_state.turn_phase = "player_turn"
