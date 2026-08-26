@@ -12,24 +12,19 @@ st.set_page_config(
 if "initialized" not in st.session_state:
   st.session_state.initialized = True
 
-  # プレイヤーキャラ6体 (3x2配置、左側エリア)
+  # プレイヤーキャラ6体（異なる役職・クラスの構成）
   st.session_state.players = [
       {
-          "id": i,
-          "name": f"戦士 {i+1}",
-          "hp": 60,
-          "max_hp": 60,
-          "pos": (i % 3, i // 3),  # (row, col) [col: 0 or 1]
-          # キャラごとのアバター画像（プレースホルダー）
-          "img_url": (
-              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
-              if i % 2 == 0
-              else "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150"
-          ),
+          "id": 0,
+          "name": "ナイト",
+          "hp": 70,
+          "max_hp": 70,
+          "pos": (0, 0),
+          "img_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
           "cards": [
               {
                   "type": "move",
-                  "name": "ステップ移動",
+                  "name": "前進",
                   "dr": 0,
                   "dc": 1,
                   "desc": "前方に1マス移動します。",
@@ -37,25 +32,145 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "直線上斬り",
-                  "range": [(0, 1), (0, 2)],
-                  "damage": 25,
-                  "desc": "前方へ直線の強力なダメージ。",
+                  "name": "シールドバッシュ",
+                  "range": [(0, 1)],
+                  "damage": 15,
+                  "desc": "目前の敵を盾で殴りつける。",
                   "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+              },
+          ],
+      },
+      {
+          "id": 1,
+          "name": "ウォーリア",
+          "hp": 60,
+          "max_hp": 60,
+          "pos": (1, 0),
+          "img_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+          "cards": [
+              {
+                  "type": "move",
+                  "name": "ダッシュ",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "前方に1マス素早く移動。",
+                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
               },
               {
                   "type": "attack",
                   "name": "ワイドスラッシュ",
                   "range": [(-1, 1), (0, 1), (1, 1)],
-                  "damage": 15,
-                  "desc": "前方の3マスを同時に攻撃します。",
+                  "damage": 20,
+                  "desc": "前方の3マスを同時に攻撃する。",
                   "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
               },
           ],
-      }
-      for i in range(6)
+      },
+      {
+          "id": 2,
+          "name": "ローグ",
+          "hp": 45,
+          "max_hp": 45,
+          "pos": (2, 0),
+          "img_url": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+          "cards": [
+              {
+                  "type": "move",
+                  "name": "サイドステップ",
+                  "dr": 1,
+                  "dc": 0,
+                  "desc": "真下に1マス素早く回り込む。",
+                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+              },
+              {
+                  "type": "attack",
+                  "name": "バックスタブ",
+                  "range": [(0, 2)],
+                  "damage": 30,
+                  "desc": "2マス先の敵の急所を突く一撃。",
+                  "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+              },
+          ],
+      },
+      {
+          "id": 3,
+          "name": "メイジ",
+          "hp": 35,
+          "max_hp": 35,
+          "pos": (0, 1),
+          "img_url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
+          "cards": [
+              {
+                  "type": "move",
+                  "name": "テレポート歩行",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "位置を少し前方に調整する。",
+                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+              },
+              {
+                  "type": "attack",
+                  "name": "ファイアボール",
+                  "range": [(0, 2), (0, 3)],
+                  "damage": 35,
+                  "desc": "遠く離れた2〜3マス先の敵を焼く。",
+                  "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
+              },
+          ],
+      },
+      {
+          "id": 4,
+          "name": "アーチャー",
+          "hp": 40,
+          "max_hp": 40,
+          "pos": (1, 1),
+          "img_url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
+          "cards": [
+              {
+                  "type": "move",
+                  "name": "バックペダル",
+                  "dr": 0,
+                  "dc": -1,
+                  "desc": "後方に1マス下がって距離を取る。",
+                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+              },
+              {
+                  "type": "attack",
+                  "name": "スナイプショット",
+                  "range": [(0, 2), (0, 3)],
+                  "damage": 25,
+                  "desc": "直線上の遠くの敵を正確に射抜く。",
+                  "img_url": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=200",
+              },
+          ],
+      },
+      {
+          "id": 5,
+          "name": "プリースト",
+          "hp": 50,
+          "max_hp": 50,
+          "pos": (2, 1),
+          "img_url": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
+          "cards": [
+              {
+                  "type": "move",
+                  "name": "聖者の歩み",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "前方に1マス進む。",
+                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+              },
+              {
+                  "type": "attack",
+                  "name": "ホーリースマイト",
+                  "range": [(0, 1)],
+                  "damage": 10,
+                  "desc": "前方の敵へ神聖な光でダメージ。",
+                  "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
+              },
+          ],
+      },
   ]
-
   # 敵キャラ6体 (右側エリア: col 4 or 5)
   st.session_state.enemies = [
       {
