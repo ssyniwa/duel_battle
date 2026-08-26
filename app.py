@@ -280,47 +280,48 @@ for r in range(3):
   for c in range(6):
     with cols[c]:
       cell_content = grid_map[r][c]
-      if cell_content is None:
-        # 空マス
-        st.markdown(
-            f"""
-                <div style="border: 1px dashed #ddd; height: 90px; display: flex; align-items: center; justify-content: center; color: #ccc; border-radius: 4px;">
-                    ({r},{c})
-                </div>
-                """,
-            unsafe_allow_html=True,
-        )
-      else:
-        entity_type, data = cell_content
-        if entity_type == "player":
-          is_current = (
-              st.session_state.turn_phase == "player_turn"
-              and living_players[
-                  st.session_state.current_actor_idx % len(living_players)
-              ]["id"]
-              == data["id"]
-          )
-          border_color = "orange" if is_current else "green"
-          bg_color = "#fff3e0" if is_current else "#e8f5e9"
-
-          # Streamlit標準関数でプレイヤー画像と情報を表示
-          st.image(data["img_url"], width=40)
+      # 各セルをコンテナ（枠線付き）で囲むことで、内部の要素がはみ出さないように統一
+      with st.container(border=True):
+        if cell_content is None:
+          # 空マス
           st.markdown(
-              f"""<div style="font-size: 10px; background: {bg_color}; border: 1px solid {border_color}; border-radius: 4px; text-align: center; padding: 2px;">
-                    <b>{data['name']}</b><br>HP:{data['hp']}
-                </div>""",
+              f"""
+                  <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px;">
+                      ({r},{c})
+                  </div>
+                  """,
               unsafe_allow_html=True,
           )
         else:
-          # 敵の表示
-          st.image(data["img_url"], width=40)
-          st.markdown(
-              f"""<div style="font-size: 10px; background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; text-align: center; padding: 2px;">
-                    <b>{data['name']}</b><br>HP:{data['hp']}
-                </div>""",
-              unsafe_allow_html=True,
-          )
+          entity_type, data = cell_content
+          if entity_type == "player":
+            is_current = (
+                st.session_state.turn_phase == "player_turn"
+                and living_players[
+                    st.session_state.current_actor_idx % len(living_players)
+                ]["id"]
+                == data["id"]
+            )
+            border_color = "orange" if is_current else "green"
+            bg_color = "#fff3e0" if is_current else "#e8f5e9"
 
+            # 画像をセル幅に自動フィットさせる（横幅100%）
+            st.image(data["img_url"], use_container_width=True)
+            st.markdown(
+                f"""<div style="font-size: 10px; background: {bg_color}; border: 1px solid {border_color}; border-radius: 4px; text-align: center; padding: 2px; margin-top: 2px;">
+                      <b>{data['name']}</b><br>HP:{data['hp']}
+                  </div>""",
+                unsafe_allow_html=True,
+            )
+          else:
+            # 敵の表示
+            st.image(data["img_url"], use_container_width=True)
+            st.markdown(
+                f"""<div style="font-size: 10px; background: #ffebee; border: 1px solid #ef5350; border-radius: 4px; text-align: center; padding: 2px; margin-top: 2px;">
+                      <b>{data['name']}</b><br>HP:{data['hp']}
+                  </div>""",
+                unsafe_allow_html=True,
+            )
 st.markdown("---")
 
 # --- フェーズごとの処理 ---
