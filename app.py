@@ -98,7 +98,7 @@ if "initialized" not in st.session_state:
           "hp": 35,
           "max_hp": 35,
           "pos": (0, 1),
-          "img_url": "images/knight.jpg",
+          "img_url": "images/mage.jpg",
           "cards": [
               {
                   "type": "move",
@@ -106,7 +106,7 @@ if "initialized" not in st.session_state:
                   "dr": 0,
                   "dc": 1,
                   "desc": "位置を少し前方に調整する。",
-                  "img_url": "https://images.unsplash.com/photo-1516116216657-548af10f8b73?w=200",
+                  "img_url": "images/mage.jpg",
               },
               {
                   "type": "attack",
@@ -114,7 +114,7 @@ if "initialized" not in st.session_state:
                   "range": [(0, 2), (0, 3)],
                   "damage": 35,
                   "desc": "遠く離れた2〜3マス先の敵を焼く。",
-                  "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=200",
+                  "img_url": "images/mage_skill1.jpg",
               },
           ],
       },
