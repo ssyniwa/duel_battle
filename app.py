@@ -251,7 +251,9 @@ if "initialized" not in st.session_state:
                   "name": "ポイズンスナイプ",
                   "range": [(0, 3)],
                   "damage": 20,
-                  "desc": "毒属性：猛毒の矢で体力をじわじわ蝕む。",
+                  "poison_turns": 3,
+                  "p_damage": 5,
+                  "desc": "毒属性：猛毒の矢で体力をじわじわ蝕む（3ターン継続）。",
                   "img_url": "images/archer_skill3.jpg",
               },
               {
@@ -259,7 +261,9 @@ if "initialized" not in st.session_state:
                   "name": "ベノムタイダル",
                   "range": [(0, 2), (0, 3)],
                   "damage": 30,
-                  "desc": "水・毒：毒の水飛沫を広範囲に拡散させる。",
+                  "poison_turns": 2,
+                  "p_damage": 8,
+                  "desc": "水・毒：毒の水飛沫を浴びせ、強力な毒に侵す（2ターン継続）。",
                   "img_url": "images/archer_skill4.jpg",
               },
           ],
@@ -323,6 +327,8 @@ if "initialized" not in st.session_state:
           "max_hp": 55,
           "pos": (0, 3),
           "damage": 10,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
       {
@@ -332,6 +338,8 @@ if "initialized" not in st.session_state:
           "max_hp": 45,
           "pos": (1, 3),
           "damage": 15,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
       {
@@ -341,6 +349,8 @@ if "initialized" not in st.session_state:
           "max_hp": 35,
           "pos": (2, 3),
           "damage": 12,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
       {
@@ -350,6 +360,8 @@ if "initialized" not in st.session_state:
           "max_hp": 30,
           "pos": (0, 4),
           "damage": 14,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
       {
@@ -359,6 +371,8 @@ if "initialized" not in st.session_state:
           "max_hp": 70,
           "pos": (1, 4),
           "damage": 20,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
       {
@@ -368,6 +382,8 @@ if "initialized" not in st.session_state:
           "max_hp": 35,
           "pos": (2, 4),
           "damage": 16,
+          "poison_turns": 0,
+          "poison_damage": 0,
           "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
       },
   ]
@@ -451,6 +467,17 @@ st.markdown("---")
 
 # --- フェーズごとの処理 ---
 if st.session_state.turn_phase == "player_turn":
+  # --- ターン開始時の毒ダメージ処理 ---
+  for e in living_enemies:
+    if e["hp"] > 0 and e["poison_turns"] > 0:
+      e["hp"] -= e["poison_damage"]
+      if e["hp"] < 0:
+        e["hp"] = 0
+      e["poison_turns"] -= 1
+      add_log(f"☠️ {e['name']} は毒により {e['poison_damage']} の継続ダメージを受けた！（残り {e['poison_turns']} ターン）")
+  
+  # 生存リストを更新
+  living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
   current_p = living_players[
       st.session_state.current_actor_idx % len(living_players)
   ]
@@ -544,10 +571,15 @@ if st.session_state.turn_phase == "player_turn":
                 target_enemy["hp"] -= card["damage"]
                 if target_enemy["hp"] < 0:
                   target_enemy["hp"] = 0
-                add_log(
-                    f"✨ {current_p['name']} の '{card['name']}' が"
-                    f" {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
-                )
+                
+                # --- 毒の付与処理 ---
+                hit_msg = f"✨ {current_p['name']} の '{card['name']}' が {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
+                if "poison_turns" in card:
+                  target_enemy["poison_turns"] = card["poison_turns"]
+                  target_enemy["poison_damage"] = card["p_damage"]
+                  hit_msg += f" ＞ **【毒】状態**を付与した！"
+                
+                add_log(hit_msg)
               else:
                 add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
 
