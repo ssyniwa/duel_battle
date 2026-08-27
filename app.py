@@ -329,7 +329,7 @@ if "initialized" not in st.session_state:
           "damage": 10,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/goblin_guard.jpg",
       },
       {
           "id": 1,
@@ -340,7 +340,7 @@ if "initialized" not in st.session_state:
           "damage": 15,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/goblin_soldure.jpg",
       },
       {
           "id": 2,
@@ -351,7 +351,7 @@ if "initialized" not in st.session_state:
           "damage": 12,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/goblin_assasin.jpg",
       },
       {
           "id": 3,
@@ -362,7 +362,7 @@ if "initialized" not in st.session_state:
           "damage": 14,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/goblin_sharman.jpg",
       },
       {
           "id": 4,
@@ -373,7 +373,7 @@ if "initialized" not in st.session_state:
           "damage": 20,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/orc_verserk.jpg",
       },
       {
           "id": 5,
@@ -384,7 +384,7 @@ if "initialized" not in st.session_state:
           "damage": 16,
           "poison_turns": 0,
           "poison_damage": 0,
-          "img_url": "https://images.unsplash.com/photo-1563089145-599997674d42?w=150",
+          "img_url": "images/dark_archer.jpg",
       },
   ]
 
