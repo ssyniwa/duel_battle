@@ -163,9 +163,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ホーリースマイト",
-                  "range": [(0, 1)],
+                  "range": [(0, 2), (0, 3)],
                   "damage": 10,
-                  "desc": "前方の敵へ神聖な光でダメージ。",
+                  "desc": "遠く離れた2〜3マス先の敵へ神聖な光でダメージ。",
                   "img_url": "images/priest_skill1.jpg",
               },
           ],
