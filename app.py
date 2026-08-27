@@ -32,10 +32,10 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "シールドバッシュ",
+                  "name": "ファイアシールドバッシュ",
                   "range": [(0, 1)],
                   "damage": 15,
-                  "desc": "目前の敵を盾で殴りつける。",
+                  "desc": "目前の敵を炎盾で殴りつける。",
                   "img_url": "images/knight_skill1.jpg",
               },
           ],
@@ -58,7 +58,7 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "ワイドスラッシュ",
+                  "name": "サンダーアイスワイドスラッシュ",
                   "range": [(-1, 1), (0, 1), (1, 1)],
                   "damage": 20,
                   "desc": "前方の3マスを同時に攻撃する。",
@@ -84,7 +84,7 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "バックスタブ",
+                  "name": "ウィンドバックスタブ",
                   "range": [(0, 2)],
                   "damage": 30,
                   "desc": "2マス先の敵の急所を突く一撃。",
@@ -136,7 +136,7 @@ if "initialized" not in st.session_state:
               },
               {
                   "type": "attack",
-                  "name": "スナイプショット",
+                  "name": "ウォータースナイプショット",
                   "range": [(0, 2), (0, 3)],
                   "damage": 25,
                   "desc": "直線上の遠くの敵を正確に射抜く。",
