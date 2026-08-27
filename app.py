@@ -527,22 +527,37 @@ if st.session_state.turn_phase == "player_turn":
               add_log(f"⚠️ マップの範囲外へは移動できません。")
 
           elif card["type"] == "attack":
-            pr, pc = current_p["pos"]
-            er, ec = target_enemy["pos"]
-            valid_hit = any(
-                (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
-            )
-
-            if valid_hit:
-              target_enemy["hp"] -= card["damage"]
-              if target_enemy["hp"] < 0:
-                target_enemy["hp"] = 0
-              add_log(
-                  f"✨ {current_p['name']} の '{card['name']}' が"
-                  f" {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
-              )
+            if target_type_tab != "敵を攻撃する":
+              add_log(f"⚠️ 攻撃スキルは敵を選択して実行してください。")
             else:
-              add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
+              pr, pc = current_p["pos"]
+              er, ec = target_entity["pos"]
+              valid_hit = any(
+                  (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
+              )
+
+              if valid_hit:
+                target_entity["hp"] -= card["damage"]
+                if target_entity["hp"] < 0:
+                  target_entity["hp"] = 0
+                add_log(
+                    f"✨ {current_p['name']} の '{card['name']}' が"
+                    f" {target_entity['name']} に命中！ {card['damage']} のダメージ！"
+                )
+              else:
+                add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
+
+          elif card["type"] == "heal":
+            # エリアヒール（味方全体回復）の処理
+            heal_amount = card["heal"]
+            for p in living_players:
+              p["hp"] += heal_amount
+              if p["hp"] > p["max_hp"]:
+                p["hp"] = p["max_hp"]
+            add_log(
+                f"💚 {current_p['name']} の '{card['name']}' 発動！"
+                f" 味方全員のHPが {heal_amount} 回復した！"
+            )
 
           # ターン進行
           st.session_state.current_actor_idx += 1
