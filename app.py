@@ -423,10 +423,8 @@ for r in range(3):
   for c in range(6):
     with cols[c]:
       cell_content = grid_map[r][c]
-      # 各セルをコンテナ（枠線付き）で囲むことで、内部の要素がはみ出さないように統一
       with st.container(border=True):
         if cell_content is None:
-          # 空マス
           st.markdown(
               f"""
                   <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px;">
@@ -445,14 +443,8 @@ for r in range(3):
                 ]["id"]
                 == data["id"]
             )
-            border_color = "orange" if is_current else "green"
-            bg_color = "#fff3e0" if is_current else "#e8f5e9"
-
-            # 画像をセル幅に自動フィットさせる（横幅100%）
             st.image(data["img_url"], use_container_width=True)
-            
           else:
-            # 敵の表示
             st.image(data["img_url"], use_container_width=True)
             
 st.markdown("---")
@@ -473,15 +465,23 @@ if st.session_state.turn_phase == "player_turn":
     )
 
   with col_action:
-    st.markdown("### 🎯 攻撃対象の敵を選択")
-    enemy_options = {
-        f"{e['name']} (位置: {e['pos']}, HP: {e['hp']})": e
-        for e in living_enemies
-    }
-    selected_enemy_label = st.selectbox(
-        "ターゲットを選択", list(enemy_options.keys())
-    )
-    target_enemy = enemy_options[selected_enemy_label]
+    st.markdown("### 🎯 ターゲットの選択")
+    target_type_tab = st.radio("行動対象の選択", ["敵を攻撃する", "味方を回復する"], horizontal=True)
+    
+    if target_type_tab == "敵を攻撃する":
+      enemy_options = {
+          f"{e['name']} (位置: {e['pos']}, HP: {e['hp']})": e
+          for e in living_enemies
+      }
+      selected_label = st.selectbox("ターゲットの敵を選択", list(enemy_options.keys()))
+      target_enemy = enemy_options[selected_label]
+    else:
+      player_options = {
+          f"{p['name']} (HP: {p['hp']}/{p['max_hp']})": p
+          for p in living_players
+      }
+      selected_label = st.selectbox("ターゲットの味方を選択", list(player_options.keys()))
+      target_enemy = player_options[selected_label]
 
   st.markdown("#### 🃏 スキルカード選択")
 
@@ -489,11 +489,9 @@ if st.session_state.turn_phase == "player_turn":
 
   for idx, card in enumerate(current_p["cards"]):
     with card_cols[idx]:
-      # Streamlit標準のコンテナと画像・テキスト表示を使ったカードUI
       with st.container(border=True):
-        st.markdown(
-            f"**{'[移動]' if card['type']=='move' else '[攻撃]'} {card['name']}**"
-        )
+        badge = "[移動]" if card['type']=='move' else ("[回復]" if card['type']=='heal' else "[攻撃]")
+        st.markdown(f"**{badge} {card['name']}**")
         st.image(card["img_url"], use_container_width=True)
         st.markdown(
             f"<div style='font-size: 12px;'>{card['desc']}</div>",
@@ -503,6 +501,12 @@ if st.session_state.turn_phase == "player_turn":
           st.markdown(
               f"<div style='font-size: 12px; color: #d32f2f;'><b>威力:</b>"
               f" {card['damage']}</div>",
+              unsafe_allow_html=True,
+          )
+        elif card["type"] == "heal":
+          st.markdown(
+              f"<div style='font-size: 12px; color: #2e7d32;'><b>回復量:</b>"
+              f" {card['heal']}</div>",
               unsafe_allow_html=True,
           )
 
@@ -531,18 +535,18 @@ if st.session_state.turn_phase == "player_turn":
               add_log(f"⚠️ 攻撃スキルは敵を選択して実行してください。")
             else:
               pr, pc = current_p["pos"]
-              er, ec = target_entity["pos"]
+              er, ec = target_enemy["pos"]
               valid_hit = any(
                   (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
               )
 
               if valid_hit:
-                target_entity["hp"] -= card["damage"]
-                if target_entity["hp"] < 0:
-                  target_entity["hp"] = 0
+                target_enemy["hp"] -= card["damage"]
+                if target_enemy["hp"] < 0:
+                  target_enemy["hp"] = 0
                 add_log(
                     f"✨ {current_p['name']} の '{card['name']}' が"
-                    f" {target_entity['name']} に命中！ {card['damage']} のダメージ！"
+                    f" {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
                 )
               else:
                 add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
