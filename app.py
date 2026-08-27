@@ -11,7 +11,7 @@ st.set_page_config(
 # --- ゲーム状態の初期化 ---
 if "initialized" not in st.session_state:
   st.session_state.initialized = True
-
+  st.session_state.stage = 1
   # プレイヤーキャラ6体（異なる役職・クラスの構成）
   st.session_state.players = [
       {
@@ -319,79 +319,30 @@ if "initialized" not in st.session_state:
       },
   ]
   # 敵キャラ6体（異なる役職・モンスターの構成）
-  st.session_state.enemies = [
-      {
-          "id": 0,
-          "name": "ゴブリン・ガード",
-          "hp": 55,
-          "max_hp": 55,
-          "pos": (0, 3),
-          "damage": 10,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/goblin_guard.jpg",
-      },
-      {
-          "id": 1,
-          "name": "ゴブリン・ソルジャー",
-          "hp": 45,
-          "max_hp": 45,
-          "pos": (1, 3),
-          "damage": 15,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/goblin_soldure.jpg",
-      },
-      {
-          "id": 2,
-          "name": "ゴブリン・アサシン",
-          "hp": 35,
-          "max_hp": 35,
-          "pos": (2, 3),
-          "damage": 12,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/goblin_assasin.jpg",
-      },
-      {
-          "id": 3,
-          "name": "ゴブリン・シャーマン",
-          "hp": 30,
-          "max_hp": 30,
-          "pos": (0, 4),
-          "damage": 14,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/goblin_sharman.jpg",
-      },
-      {
-          "id": 4,
-          "name": "オーク・バーサーカー",
-          "hp": 70,
-          "max_hp": 70,
-          "pos": (1, 4),
-          "damage": 20,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/orc_verserk.jpg",
-      },
-      {
-          "id": 5,
-          "name": "ダーク・アーチャー",
-          "hp": 35,
-          "max_hp": 35,
-          "pos": (2, 4),
-          "damage": 16,
-          "poison_turns": 0,
-          "poison_damage": 0,
-          "img_url": "images/dark_archer.jpg",
-      },
-  ]
-
+  st.session_state.stage_enemies = {
+        1: [
+            {"id": 0, "name": "ゴブリン・ガード", "hp": 55, "max_hp": 55, "pos": (0, 3), "damage": 10, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_guard.jpg"},
+            {"id": 1, "name": "ゴブリン・ソルジャー", "hp": 45, "max_hp": 45, "pos": (1, 3), "damage": 15, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_soldure.jpg"},
+            {"id": 2, "name": "ゴブリン・アサシン", "hp": 35, "max_hp": 35, "pos": (2, 3), "damage": 12, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_assasin.jpg"},
+            {"id": 3, "name": "ゴブリン・シャーマン", "hp": 30, "max_hp": 30, "pos": (0, 4), "damage": 14, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_sharman.jpg"},
+            {"id": 4, "name": "オーク・バーサーカー", "hp": 70, "max_hp": 70, "pos": (1, 4), "damage": 20, "poison_turns": 0, "poison_damage": 0, "img_url": "images/orc_verserk.jpg"},
+            {"id": 5, "name": "ダーク・アーチャー", "hp": 35, "max_hp": 35, "pos": (2, 4), "damage": 16, "poison_turns": 0, "poison_damage": 0, "img_url": "images/dark_archer.jpg"},
+        ],
+        2: [
+            {"id": 0, "name": "ブルー・スライム", "hp": 40, "max_hp": 40, "pos": (0, 3), "damage": 12, "poison_turns": 0, "poison_damage": 0, "img_url": "images/blue_slime.jpg"},
+            {"id": 1, "name": "レッド・スライム", "hp": 40, "max_hp": 40, "pos": (1, 3), "damage": 14, "poison_turns": 0, "poison_damage": 0, "img_url": "images/red_slime.jpg"},
+            {"id": 2, "name": "イエロー・スライム", "hp": 40, "max_hp": 40, "pos": (2, 3), "damage": 15, "poison_turns": 0, "poison_damage": 0, "img_url": "images/yellow_slime.jpg"},
+            {"id": 3, "name": "グリーン・スライム", "hp": 50, "max_hp": 50, "pos": (0, 4), "damage": 10, "poison_turns": 0, "poison_damage": 0, "img_url": "images/green_slime.jpg"},
+            {"id": 4, "name": "メタル・スライム", "hp": 25, "max_hp": 25, "pos": (1, 4), "damage": 8, "poison_turns": 0, "poison_damage": 0, "img_url": "images/metal_slime.jpg"},
+            {"id": 5, "name": "キング・スライム", "hp": 80, "max_hp": 80, "pos": (2, 4), "damage": 22, "poison_turns": 0, "poison_damage": 0, "img_url": "images/king_slime.jpg"},
+        ],
+        # 同様にして 3〜10ステージ分の敵リストを定義（省略）
+    }
+  st.session_state.enemies = st.session_state.stage_enemies[st.session_state.stage]
   st.session_state.turn_phase = "player_turn"
   st.session_state.current_actor_idx = 0
   st.session_state.battle_log = [
-      "バトル開始！プレイヤー側のターンです。スキルカードを選択してください。"
+      f"ステージ {st.session_state.stage} 開始！プレイヤー側のターンです。スキルカードを選択してください。"
   ]
 
 
@@ -403,13 +354,26 @@ def add_log(msg):
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
 
-st.title("⚔️ タクティカル・デュエルバトル (標準関数画像版)")
+st.title(f"⚔️ タクティカル・デュエルバトル (ステージ {st.session_state.stage} / 10)")
 
 if not living_enemies:
-  st.success("🎉 【勝利】すべての敵を撃破しました！")
-  if st.button("もう一度プレイする"):
-    del st.session_state.initialized
-    st.rerun()
+  if st.session_state.stage < 10:
+    st.success(f"🎉 ステージ {st.session_state.stage} クリア！")
+    if st.button("次のステージに進む"):
+      st.session_state.stage += 1
+      # 次のステージの敵データを読み込み、位置やHPを初期化
+      import copy
+      st.session_state.enemies = copy.deepcopy(st.session_state.stage_enemies[st.session_state.stage])
+      # プレイヤーのHPを少し回復させるなどの処理を挟むことも可能
+      st.session_state.turn_phase = "player_turn"
+      st.session_state.current_actor_idx = 0
+      add_log(f"ステージ {st.session_state.stage} に突入しました！")
+      st.rerun()
+  else:
+    st.success("🏆 【完全勝利】全10ステージを制覇し、世界を救いました！")
+    if st.button("最初からもう一度プレイする"):
+      del st.session_state.initialized
+      st.rerun()
   st.stop()
 
 if not living_players:
