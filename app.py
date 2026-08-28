@@ -25,9 +25,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "前進",
-                  "dr": 1,
-                  "dc": 0,
-                  "desc": "下方に1マス移動します。",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "前方に1マス移動します。",
                   "img_url": "images/knight.jpg",
               },
               {
@@ -75,17 +75,17 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "ダッシュ",
-                  "dr": 1,
-                  "dc": 0,
-                  "desc": "下方に1マス素早く移動。",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "前方に1マス素早く移動。",
                   "img_url": "images/warrior.jpg",
               },
               {
-                  "type": "move2",
-                  "name": "ダッシュ",
-                  "dr": -1,
-                  "dc": 0,
-                  "desc": "上方に1マス素早く移動。",
+                  "type": "move",
+                  "name": "後退ダッシュ",
+                  "dr": 0,
+                  "dc": -1,
+                  "desc": "後方に1マス素早く移動。",
                   "img_url": "images/warrior.jpg",
               },
               {
@@ -135,7 +135,7 @@ if "initialized" not in st.session_state:
                   "name": "サイドステップ",
                   "dr": -1,
                   "dc": 0,
-                  "desc": "真上に1マス素早く回り込む。",
+                  "desc": "上に1マス素早く回り込む。",
                   "img_url": "images/rogue.jpg",
               },
               {
@@ -183,9 +183,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "テレポート歩行",
-                  "dr": 1,
-                  "dc": 0,
-                  "desc": "位置を少し下方に調整する。",
+                  "dr": 0,
+                  "dc": 1,
+                  "desc": "前方に1マス位置を調整する。",
                   "img_url": "images/mage.jpg",
               },
               {
@@ -233,17 +233,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "バックペダル",
-                  "dr": 1,
-                  "dc": 0,
-                  "desc": "下方に1マス下がって距離を取る。",
-                  "img_url": "images/archer.jpg",
-              },
-              {
-                  "type": "move",
-                  "name": "バックペダル2",
-                  "dr": -1,
-                  "dc": 0,
-                  "desc": "上方に1マス下がって距離を取る。",
+                  "dr": 0,
+                  "dc": -1,
+                  "desc": "後方に1マス下がって距離を取る。",
                   "img_url": "images/archer.jpg",
               },
               {
@@ -295,9 +287,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "聖者の歩み",
-                  "dr": -1,
-                  "dc": 0,
-                  "desc": "上方に1マス進む。",
+                  "dr": 0,
+                  "dc": -1,
+                  "desc": "後方に1マス進む。",
                   "img_url": "images/priest.jpg",
               },
               {
@@ -334,7 +326,6 @@ if "initialized" not in st.session_state:
           ],
       },
   ]
-  # 敵キャラ6体（異なる役職・モンスターの構成）
   # 敵キャラ6体（ステータス強化版）
   st.session_state.stage_enemies = {
         1: [
@@ -430,6 +421,23 @@ def add_log(msg):
   st.session_state.battle_log.insert(0, msg)
 
 
+# --- 敵の列シフト処理 (4列目 -> 3列目) ---
+def update_enemy_positions():
+  # 生存している敵のみ対象
+  alive_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
+  
+  # 各行(row 0, 1, 2)ごとにチェック
+  for r in range(3):
+    # 列3と列4にいる生存敵を特定
+    col3_enemy = next((e for e in alive_enemies if e["pos"] == (r, 3)), None)
+    col4_enemy = next((e for e in alive_enemies if e["pos"] == (r, 4)), None)
+    
+    # 3列目が不在で、4列目に敵がいる場合、4列目の敵を3列目に移動
+    if col3_enemy is None and col4_enemy is not None:
+      col4_enemy["pos"] = (r, 3)
+      add_log(f"🔄 {col4_enemy['name']} が空いた3列目に前進しました！")
+
+
 # --- 勝利・敗北判定 ---
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
@@ -442,11 +450,9 @@ if not living_enemies:
     
     # --- ステージクリアによる味方全体の強化処理 ---
     for p in st.session_state.players:
-      # 最大HPと現在HPの強化（端数切り捨て、上限も増加）
       p["max_hp"] = int(p["max_hp"] * 1.2)
-      p["hp"] = p["max_hp"]  # ステージクリア時に全回復も兼ねる
+      p["hp"] = p["max_hp"]
       
-      # 所持スキルの威力・回復量を強化
       for card in p["cards"]:
         if "damage" in card:
           card["damage"] = int(card["damage"] * 1.2)
@@ -456,7 +462,6 @@ if not living_enemies:
           card["p_damage"] = int(card["p_damage"] * 1.2)
     
     add_log("✨ 勝利の報酬として、味方全体のステータスとスキル能力が上昇しました！")
-    # ---------------------------------------------
 
     if st.button("次のステージに進む"):
       st.session_state.stage += 1
@@ -483,7 +488,6 @@ if not living_players:
 # --- 3×6 バトルフィールドの描画 (Streamlitのカラムを活用) ---
 st.subheader("🗺️ 戦場マップ (3行 × 6列)")
 
-# グリッドの作成 (3行 × 6列をマッピング)
 grid_map = [[None for _ in range(6)] for _ in range(3)]
 
 for p in living_players:
@@ -494,17 +498,39 @@ for e in living_enemies:
   r, c = e["pos"]
   grid_map[r][c] = ("enemy", e)
 
-# Streamlitの行とカラムを使って綺麗にグリッドを描画
+# 現在の行動キャラの取得
+current_p = living_players[
+    st.session_state.current_actor_idx % len(living_players)
+] if living_players else None
+
 for r in range(3):
   cols = st.columns(6)
   for c in range(6):
     with cols[c]:
       cell_content = grid_map[r][c]
+      
+      # 攻撃可能ハイライト判定（プレイヤーのターンかつ行動キャラが存在する場合）
+      is_attackable = False
+      if st.session_state.turn_phase == "player_turn" and current_p and cell_content:
+        etype, edata = cell_content
+        if etype == "enemy":
+          pr, pc = current_p["pos"]
+          er, ec = edata["pos"]
+          # 各カードの射程範囲をチェックし、どれか一つでも届くなら攻撃可能とする
+          for card in current_p["cards"]:
+            if card["type"] == "attack":
+              if any((pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]):
+                is_attackable = True
+                break
+
+      # ハイライト用の枠線カラーやスタイル設定
+      border_style = "border: 2px solid #ff4b4b;" if is_attackable else "border: 1px solid #ddd;"
+      
       with st.container(border=True):
         if cell_content is None:
           st.markdown(
               f"""
-                  <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px;">
+                  <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px; {border_style}">
                       ({r},{c})
                   </div>
                   """,
@@ -513,20 +539,15 @@ for r in range(3):
         else:
           entity_type, data = cell_content
           if entity_type == "player":
-            is_current = (
-                st.session_state.turn_phase == "player_turn"
-                and living_players[
-                    st.session_state.current_actor_idx % len(living_players)
-                ]["id"]
-                == data["id"]
-            )
             st.image(data["img_url"], use_container_width=True)
             st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b></div>", unsafe_allow_html=True)
             hp_ratio = max(0.0, min(1.0, data["hp"] / data["max_hp"]))
             st.progress(hp_ratio, text=f"HP: {data['hp']}/{data['max_hp']}")
           else:
+            # 攻撃可能な敵にはマークを付与して視覚的にわかりやすくする
+            highlight_label = " 🎯【攻撃可能】" if is_attackable else ""
             st.image(data["img_url"], use_container_width=True)
-            st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b></div>", unsafe_allow_html=True)
+            st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b>{highlight_label}</div>", unsafe_allow_html=True)
             hp_ratio = max(0.0, min(1.0, data["hp"] / data["max_hp"]))
             st.progress(hp_ratio, text=f"HP: {data['hp']}/{data['max_hp']}")
             
@@ -542,6 +563,9 @@ if st.session_state.turn_phase == "player_turn":
         e["hp"] = 0
       e["poison_turns"] -= 1
       add_log(f"☠️ {e['name']} は毒により {e['poison_damage']} の継続ダメージを受けた！（残り {e['poison_turns']} ターン）")
+  
+  # 毒ダメージ後の敵の死亡・シフト処理
+  update_enemy_positions()
   
   # 生存リストを更新
   living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
@@ -638,6 +662,9 @@ if st.session_state.turn_phase == "player_turn":
                 if target_enemy["hp"] < 0:
                   target_enemy["hp"] = 0
                 
+                # --- 敵撃破時の列シフトチェック ---
+                update_enemy_positions()
+
                 # --- 毒の付与処理 ---
                 hit_msg = f"✨ {current_p['name']} の '{card['name']}' が {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
                 if "poison_turns" in card:
@@ -650,7 +677,6 @@ if st.session_state.turn_phase == "player_turn":
                 add_log(f"❌ {card['name']} の攻撃範囲外です（届きません）！")
 
           elif card["type"] == "heal":
-            # エリアヒール（味方全体回復）の処理
             heal_amount = card["heal"]
             for p in living_players:
               p["hp"] += heal_amount
