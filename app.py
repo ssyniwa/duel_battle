@@ -422,12 +422,29 @@ st.title(f"⚔️ タクティカル・デュエルバトル (ステージ {st.s
 if not living_enemies:
   if st.session_state.stage < 10:
     st.success(f"🎉 ステージ {st.session_state.stage} クリア！")
+    
+    # --- ステージクリアによる味方全体の強化処理 ---
+    for p in st.session_state.players:
+      # 最大HPと現在HPの強化（端数切り捨て、上限も増加）
+      p["max_hp"] = int(p["max_hp"] * 1.2)
+      p["hp"] = p["max_hp"]  # ステージクリア時に全回復も兼ねる
+      
+      # 所持スキルの威力・回復量を強化
+      for card in p["cards"]:
+        if "damage" in card:
+          card["damage"] = int(card["damage"] * 1.2)
+        if "heal" in card:
+          card["heal"] = int(card["heal"] * 1.2)
+        if "p_damage" in card:
+          card["p_damage"] = int(card["p_damage"] * 1.2)
+    
+    add_log("✨ 勝利の報酬として、味方全体のステータスとスキル能力が上昇しました！")
+    # ---------------------------------------------
+
     if st.button("次のステージに進む"):
       st.session_state.stage += 1
-      # 次のステージの敵データを読み込み、位置やHPを初期化
       import copy
       st.session_state.enemies = copy.deepcopy(st.session_state.stage_enemies[st.session_state.stage])
-      # プレイヤーのHPを少し回復させるなどの処理を挟むことも可能
       st.session_state.turn_phase = "player_turn"
       st.session_state.current_actor_idx = 0
       add_log(f"ステージ {st.session_state.stage} に突入しました！")
@@ -487,8 +504,14 @@ for r in range(3):
                 == data["id"]
             )
             st.image(data["img_url"], use_container_width=True)
+            st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b></div>", unsafe_allow_html=True)
+            hp_ratio = max(0.0, min(1.0, data["hp"] / data["max_hp"]))
+            st.progress(hp_ratio, text=f"HP: {data['hp']}/{data['max_hp']}")
           else:
             st.image(data["img_url"], use_container_width=True)
+            st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b></div>", unsafe_allow_html=True)
+            hp_ratio = max(0.0, min(1.0, data["hp"] / data["max_hp"]))
+            st.progress(hp_ratio, text=f"HP: {data['hp']}/{data['max_hp']}")
             
 st.markdown("---")
 
@@ -510,13 +533,12 @@ if st.session_state.turn_phase == "player_turn":
   ]
 
   col_info, col_action = st.columns([1, 3])
-  with col_info:
+ with col_info:
     st.markdown("### 👤 現在の行動キャラ")
     st.image(current_p["img_url"], width=70)
-    st.markdown(
-        f"**{current_p['name']}**<br>HP: {current_p['hp']}/{current_p['max_hp']}",
-        unsafe_allow_html=True,
-    )
+    st.markdown(f"**{current_p['name']}**")
+    hp_ratio = max(0.0, min(1.0, current_p["hp"] / current_p["max_hp"]))
+    st.progress(hp_ratio, text=f"HP: {current_p['hp']}/{current_p['max_hp']}")
 
   with col_action:
     st.markdown("### 🎯 ターゲットの選択")
