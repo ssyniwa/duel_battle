@@ -141,7 +141,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ウィンドバックスタブ",
-                  "range": [(0, 2)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 30,
                   "desc": "2マス先の敵の急所を突く一撃。",
                   "img_url": "images/rogue_skill1.jpg",
@@ -149,7 +149,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ガイルゲイル",
-                  "range": [(0, 2)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 25,
                   "desc": "風属性：真空の刃を纏い背後を切り抜ける。",
                   "img_url": "images/rogue_skill2.jpg",
@@ -157,7 +157,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "フラッシュスタブ",
-                  "range": [(0, 1)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 28,
                   "desc": "光属性：目くらましの突き技で急所を貫く。",
                   "img_url": "images/rogue_skill3.jpg",
@@ -165,7 +165,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "アストラルストーム",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 38,
                   "desc": "風・光：疾風と閃光の連続攻撃を浴びせる。",
                   "img_url": "images/rogue_skill4.jpg",
