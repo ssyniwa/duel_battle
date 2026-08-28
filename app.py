@@ -533,7 +533,7 @@ if st.session_state.turn_phase == "player_turn":
   ]
 
   col_info, col_action = st.columns([1, 3])
- with col_info:
+  with col_info:
     st.markdown("### 👤 現在の行動キャラ")
     st.image(current_p["img_url"], width=70)
     st.markdown(f"**{current_p['name']}**")
