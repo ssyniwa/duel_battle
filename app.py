@@ -590,7 +590,7 @@ if st.session_state.turn_phase == "player_turn":
   down_ally_alive = any(p["pos"] == (pr + 1, pc) and p["hp"] > 0 for p in st.session_state.players)
 
   # 「攻撃範囲内に敵がいない」かつ「上下の味方キャラが死亡している（または存在しない）」場合に自動パス
-  if not can_attack and not up_ally_alive and not down_ally_alive:
+  if not can_attack and up_ally_alive and down_ally_alive:
     add_log(f"💤 {current_p['name']} は攻撃範囲に敵がおらず、上下の味方もいないため、自動で待機しました。")
     st.session_state.turn_phase = "player_turn"
     st.session_state.current_actor_idx += 1
