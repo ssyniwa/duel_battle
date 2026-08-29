@@ -33,7 +33,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ファイアシールドバッシュ",
-                  "range": [(0, 1)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 15,
                   "desc": "目前の敵を炎盾で殴りつける。",
                   "img_url": "images/knight_skill1.jpg",
@@ -41,7 +41,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "フレイムスラッシュ",
-                  "range": [(0, 1)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 22,
                   "desc": "炎属性：前方の敵を燃え盛る剣で斬りつける。",
                   "img_url": "images/knight_skill2.jpg",
@@ -49,7 +49,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ダークシールド",
-                  "range": [(0, 1)],
+                  "range": [(0, 1), (0, 2)],
                   "damage": 18,
                   "desc": "闇属性：闇のオーラを纏った盾で打ち据える。",
                   "img_url": "images/knight_skill3.jpg",
@@ -99,7 +99,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "フロストエッジ",
-                  "range": [(0, 1)],
+                  "range": [(-1, 1), (0, 1), (1, 1)],
                   "damage": 24,
                   "desc": "氷属性：凍てつく冷気の刃で切り裂く。",
                   "img_url": "images/warrior_skill2.jpg",
@@ -107,7 +107,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ライトニングブレイク",
-                  "range": [(1, 1)],
+                  "range": [(-1, 1), (0, 1), (1, 1)],
                   "damage": 26,
                   "desc": "雷属性：電撃を伴う強烈な一撃を叩き込む。",
                   "img_url": "images/warrior_skill3.jpg",
@@ -199,7 +199,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ロックバレット",
-                  "range": [(0, 2)],
+                  "range": [(0, 2), (0, 3)],
                   "damage": 30,
                   "desc": "岩属性：巨大な岩を生成して激突させる。",
                   "img_url": "images/mage_skill2.jpg",
@@ -207,7 +207,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ミラージュフレア",
-                  "range": [(0, 3)],
+                  "range": [(0, 2), (0, 3)],
                   "damage": 32,
                   "desc": "幻属性：幻影の炎で敵の精神を揺さぶる。",
                   "img_url": "images/mage_skill3.jpg",
@@ -257,7 +257,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ポイズンスナイプ",
-                  "range": [(0, 3)],
+                  "range": [(0, 2), (0, 3)],
                   "damage": 20,
                   "poison_turns": 3,
                   "p_damage": 5,
