@@ -790,15 +790,17 @@ if st.session_state.turn_phase == "player_turn":
 elif st.session_state.turn_phase == "enemy_turn":
   st.warning("⚠️ **敵のターン（個別行動）**です。")
   
+  # 常に最新の生存敵リストを取得
+  living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
+  
   if living_enemies:
-    # 生存している敵の中から、現在のインデックスに対応する1体を選ぶ
-    active_enemy = living_enemies[st.session_state.current_enemy_idx % len(living_enemies)]
+    # 敵の数が減った際のインデックスオーバーを防ぐため、ここで確実に剰余を取る
+    st.session_state.current_enemy_idx = st.session_state.current_enemy_idx % len(living_enemies)
+    active_enemy = living_enemies[st.session_state.current_enemy_idx]
     
     if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
-      # --- 【維持】集中攻撃のターゲット選択ロジック（最も前方にいる・HPの低い味方を狙う） ---
       target_p = min(living_players, key=lambda p: (p["pos"][1], p["hp"]))
       
-      # --- 【変更】戦略的かつマイルドな調整（25%の確率で敵の手元が狂い、ダメージが半減する） ---
       import random as rand
       is_softened = rand.random() < 0.25
       actual_damage = active_enemy["damage"] // 2 if is_softened else active_enemy["damage"]
@@ -817,18 +819,20 @@ elif st.session_state.turn_phase == "enemy_turn":
             f"💥 {active_enemy['name']} は戦術的に {target_p['name']} を集中狙撃した！"
             f" {actual_damage} の手痛いダメージ！"
         )
-      # --------------------------------------------------------------------------------
       
       # 次の敵へインデックスを進める
       st.session_state.current_enemy_idx += 1
-      # プレイヤーのターンに戻す
       st.session_state.turn_phase = "player_turn"
+      
+      # プレイヤー側に戻す際もインデックスを安全化
+      if living_players:
+        st.session_state.current_actor_idx = st.session_state.current_actor_idx % len(living_players)
+        
       add_log(f"🛡️ 敵の行動終了。次の味方のターンです！")
       st.rerun()
   else:
     st.session_state.turn_phase = "player_turn"
     st.rerun()
-
 # --- バトルログ ---
 st.markdown("---")
 st.subheader("📜 バトルログ")
