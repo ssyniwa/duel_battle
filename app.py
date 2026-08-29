@@ -582,16 +582,21 @@ if st.session_state.turn_phase == "player_turn":
     elif card["type"] == "heal":
       can_attack = True # 回復スキル持ちは常に行動可能とみなす
 
-  # 現在のキャラの行（r）と列（c）を取得
+ # 現在のキャラの行（r）と列（c）を取得
   pr, pc = current_p["pos"]
   
-  # 上のマス（r - 1, c）および下のマス（r + 1, c）に生存している味方がいるか確認
-  up_ally_alive = any(p["pos"] == (pr - 1, pc) and p["hp"] > 0 for p in st.session_state.players)
-  down_ally_alive = any(p["pos"] == (pr + 1, pc) and p["hp"] > 0 for p in st.session_state.players)
+  # 上のマス（r - 1, c）および下のマス（r + 1, c）にマップの範囲内で存在する味方がいるか、またそれが生存しているか確認
+  up_exists = pr - 1 >= 0
+  down_exists = pr + 1 < 3
+  
+  up_ally_alive = any(p["pos"] == (pr - 1, pc) and p["hp"] > 0 for p in st.session_state.players) if up_exists else False
+  down_ally_alive = any(p["pos"] == (pr + 1, pc) and p["hp"] > 0 for p in st.session_state.players) if down_exists else False
 
-  # 「攻撃範囲内に敵がいない」かつ「上下の味方キャラが死亡している（または存在しない）」場合に自動パス
-  if not can_attack and up_ally_alive and down_ally_alive:
-    add_log(f"💤 {current_p['name']} は攻撃範囲に敵がおらず、上下の味方もいるので、自動で待機しました。")
+  # 「攻撃範囲内に敵がいない」かつ「上または下の存在する味方キャラが生存している」場合に自動パス
+  has_surviving_adjacent_ally = (up_exists and up_ally_alive) or (down_exists and down_ally_alive)
+
+  if not can_attack and has_surviving_adjacent_ally:
+    add_log(f"💤 {current_p['name']} は攻撃範囲に敵がおらず、周囲に生存している味方がいるため、自動で待機しました。")
     st.session_state.turn_phase = "player_turn"
     st.session_state.current_actor_idx += 1
     st.rerun()
