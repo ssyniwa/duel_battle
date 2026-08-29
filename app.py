@@ -783,12 +783,17 @@ elif st.session_state.turn_phase == "enemy_turn":
     active_enemy = living_enemies[st.session_state.current_enemy_idx % len(living_enemies)]
     
     if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
-      target_p = random.choice(living_players)
+      # --- 【変更】戦略的なターゲット選択ロジック ---
+      # 例1: 最も前方にいる（列 c が小さい）味方を優先して狙う。同列ならHPが低い方。
+      # 例2: HPが最も低い味方を集中攻撃させる場合は min(living_players, key=lambda p: p["hp"]) を使用
+      target_p = min(living_players, key=lambda p: (p["pos"][1], p["hp"]))
+      # --------------------------------------------
+
       target_p["hp"] -= active_enemy["damage"]
       if target_p["hp"] < 0:
         target_p["hp"] = 0
       add_log(
-          f"💥 {active_enemy['name']} の攻撃！ {target_p['name']} に"
+          f"💥 {active_enemy['name']} は戦術的に {target_p['name']} を狙った！"
           f" {active_enemy['damage']} のダメージ！"
       )
       
