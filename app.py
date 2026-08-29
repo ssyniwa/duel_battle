@@ -783,19 +783,29 @@ elif st.session_state.turn_phase == "enemy_turn":
     active_enemy = living_enemies[st.session_state.current_enemy_idx % len(living_enemies)]
     
     if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
-      # --- 【変更】戦略的なターゲット選択ロジック ---
-      # 例1: 最も前方にいる（列 c が小さい）味方を優先して狙う。同列ならHPが低い方。
-      # 例2: HPが最も低い味方を集中攻撃させる場合は min(living_players, key=lambda p: p["hp"]) を使用
+      # --- 【維持】集中攻撃のターゲット選択ロジック（最も前方にいる・HPの低い味方を狙う） ---
       target_p = min(living_players, key=lambda p: (p["pos"][1], p["hp"]))
-      # --------------------------------------------
-
-      target_p["hp"] -= active_enemy["damage"]
+      
+      # --- 【変更】戦略的かつマイルドな調整（25%の確率で敵の手元が狂い、ダメージが半減する） ---
+      import random as rand
+      is_softened = rand.random() < 0.25
+      actual_damage = active_enemy["damage"] // 2 if is_softened else active_enemy["damage"]
+      
+      target_p["hp"] -= actual_damage
       if target_p["hp"] < 0:
         target_p["hp"] = 0
-      add_log(
-          f"💥 {active_enemy['name']} は戦術的に {target_p['name']} を狙った！"
-          f" {active_enemy['damage']} のダメージ！"
-      )
+        
+      if is_softened:
+        add_log(
+            f"🎯 {active_enemy['name']} は {target_p['name']} を狙ったが、"
+            f"攻撃が少し緩み {actual_damage} のダメージに抑えられた！"
+        )
+      else:
+        add_log(
+            f"💥 {active_enemy['name']} は戦術的に {target_p['name']} を集中狙撃した！"
+            f" {actual_damage} の手痛いダメージ！"
+        )
+      # --------------------------------------------------------------------------------
       
       # 次の敵へインデックスを進める
       st.session_state.current_enemy_idx += 1
