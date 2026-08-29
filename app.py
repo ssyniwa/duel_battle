@@ -623,18 +623,26 @@ if st.session_state.turn_phase == "player_turn":
           if card["type"] == "move":
             pr, pc = current_p["pos"]
             nr, nc = pr + card["dr"], pc + card["dc"]
+            
+            # マップの範囲内かチェック (3行 × 6列)
             if 0 <= nr < 3 and 0 <= nc < 6:
-              occupied = any(
-                  p["pos"] == (nr, nc) for p in st.session_state.players
-              ) or any(e["pos"] == (nr, nc) for e in st.session_state.enemies)
-              if not occupied:
-                current_p["pos"] = (nr, nc)
+              # 移動先に他の味方または敵がいるかチェック
+              target_player_occupied = any(p["pos"] == (nr, nc) for p in st.session_state.players if p["hp"] > 0)
+              target_enemy_occupied = any(e["pos"] == (nr, nc) for e in st.session_state.enemies if e["hp"] > 0)
+              
+              if not target_player_occupied and not target_enemy_occupied:
+                # セッションステート内の該当プレイヤーの位置を直接更新
+                for p in st.session_state.players:
+                  if p["id"] == current_p["id"]:
+                    p["pos"] = (nr, nc)
+                    break
+                
                 add_log(
                     f"🏃 {current_p['name']} は '{card['name']}' で"
                     f" ({nr}, {nc}) に移動しました。"
                 )
               else:
-                add_log(f"⚠️ そのマスには既にキャラクターがいます。")
+                add_log(f"⚠️ そのマスには既にキャラクターが存在するため移動できません。")
             else:
               add_log(f"⚠️ マップの範囲外へは移動できません。")
 
