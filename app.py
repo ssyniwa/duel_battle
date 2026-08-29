@@ -574,7 +574,13 @@ if st.session_state.turn_phase == "player_turn":
   if not living_enemies or not living_players:
     st.rerun()
 
-  current_p = living_players[st.session_state.current_actor_idx % len(living_players)]
+  # =================【追加】ターン順のズレ自動補正 =================
+  # 前回の行動者より後ろにいる生存者を正しく検索してインデックスを調整する
+  if living_players:
+    st.session_state.current_actor_idx = st.session_state.current_actor_idx % len(living_players)
+  # ===============================================================
+
+  current_p = living_players[st.session_state.current_actor_idx]
 
   # --- 自動パス判定：移動も攻撃も不可能な状態かチェック ---
   can_move = False
@@ -614,7 +620,9 @@ if st.session_state.turn_phase == "player_turn":
   if not can_move and not can_attack and has_surviving_adjacent_ally:
     add_log(f"💤 {current_p['name']} は移動も攻撃もできず、周囲に生存している味方がいるため、自動で待機しました。")
     st.session_state.turn_phase = "player_turn"
-    st.session_state.current_actor_idx += 1
+    # 【修正】生存人数で割り算してインデックスを安全に更新
+    if living_players:
+      st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
     st.rerun()
   # ----------------------------------------------------
 
@@ -766,13 +774,17 @@ if st.session_state.turn_phase == "player_turn":
 
           # 1体の行動が終了したら、即座に敵のターン（フェーズ）に切り替える
           st.session_state.turn_phase = "enemy_turn"
-          st.session_state.current_actor_idx += 1  # 次回番が回ってきた時のためにインクリメントしておく
+          # 【修正】生存人数で割り算してインデックスを安全に更新
+          if living_players:
+            st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
           st.rerun()
 
   if st.button("このキャラクターの行動をパスする"):
     add_log(f"💤 {current_p['name']} はその場で待機しました。")
     st.session_state.turn_phase = "player_turn"  # 敵のターンにせず、味方のターンのまま継続
-    st.session_state.current_actor_idx += 1
+    # 【修正】生存人数で割り算してインデックスを安全に更新
+    if living_players:
+      st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
     st.rerun()
 
 elif st.session_state.turn_phase == "enemy_turn":
