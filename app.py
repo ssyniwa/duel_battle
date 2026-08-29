@@ -470,6 +470,14 @@ if not living_enemies:
       st.session_state.stage += 1
       import copy
       st.session_state.enemies = copy.deepcopy(st.session_state.stage_enemies[st.session_state.stage])
+      
+      # --- 【追加】ステージ進行時に味方キャラの位置を初期配置にリセット ---
+      initial_positions = [(0, 2), (1, 2), (2, 2), (0, 1), (1, 1), (2, 1)]
+      for i, p in enumerate(st.session_state.players):
+        if i < len(initial_positions):
+          p["pos"] = initial_positions[i]
+      # ------------------------------------------------------------------
+
       st.session_state.current_actor_idx = 0
       st.session_state.current_enemy_idx = 0
       st.session_state.turn_phase = "player_turn"
