@@ -327,7 +327,7 @@ if "initialized" not in st.session_state:
       },
   ]
   # 敵キャラ6体（ステータス強化版）
-  # 限界までインフレを強化した敵キャラのステータス定義
+  # 限界を超えてインフレを極めた敵キャラのステータス定義
   st.session_state.stage_enemies = {
       1: [
           {"id": 0, "name": "ゴブリン・ガード", "hp": 40, "max_hp": 40, "pos": (0, 3), "damage": 8, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_guard.jpg"},
@@ -369,46 +369,46 @@ if "initialized" not in st.session_state:
           {"id": 4, "name": "ブリザード・スピリット", "hp": 110, "max_hp": 110, "pos": (1, 4), "damage": 46, "poison_turns": 0, "poison_damage": 0, "img_url": "images/blizzard_spirit.jpg"},
           {"id": 5, "name": "フロスト・ジャイアント", "hp": 200, "max_hp": 200, "pos": (2, 4), "damage": 58, "poison_turns": 0, "poison_damage": 0, "img_url": "images/frost_giant.jpg"},
       ],
-      # --- ここから超インフレステージ (6〜10) ---
+      # --- ここから過激なインフレステージ (6〜10) ---
       6: [
-          {"id": 0, "name": "サンダー・バード", "hp": 220, "max_hp": 220, "pos": (0, 3), "damage": 85, "poison_turns": 0, "poison_damage": 0, "img_url": "images/thunder_bird.jpg"},
-          {"id": 1, "name": "ライトニング・エレメンタル", "hp": 190, "max_hp": 190, "pos": (1, 3), "damage": 92, "poison_turns": 0, "poison_damage": 0, "img_url": "images/lightning_elemental.jpg"},
-          {"id": 2, "name": "ストーム・ナイト", "hp": 300, "max_hp": 300, "pos": (2, 3), "damage": 105, "poison_turns": 0, "poison_damage": 0, "img_url": "images/storm_knight.jpg"},
-          {"id": 3, "name": "ウィンド・シルフ", "hp": 160, "max_hp": 160, "pos": (0, 4), "damage": 75, "poison_turns": 0, "poison_damage": 0, "img_url": "images/wind_sylph.jpg"},
-          {"id": 4, "name": "ボルト・ガルーダ", "hp": 350, "max_hp": 350, "pos": (1, 4), "damage": 118, "poison_turns": 0, "poison_damage": 0, "img_url": "images/bolt_garuda.jpg"},
-          {"id": 5, "name": "雷神の化身", "hp": 480, "max_hp": 480, "pos": (2, 4), "damage": 135, "poison_turns": 0, "poison_damage": 0, "img_url": "images/rai_avatar.jpg"},
+          {"id": 0, "name": "サンダー・バード", "hp": 300, "max_hp": 300, "pos": (0, 3), "damage": 110, "poison_turns": 0, "poison_damage": 0, "img_url": "images/thunder_bird.jpg"},
+          {"id": 1, "name": "ライトニング・エレメンタル", "hp": 260, "max_hp": 260, "pos": (1, 3), "damage": 120, "poison_turns": 0, "poison_damage": 0, "img_url": "images/lightning_elemental.jpg"},
+          {"id": 2, "name": "ストーム・ナイト", "hp": 400, "max_hp": 400, "pos": (2, 3), "damage": 135, "poison_turns": 0, "poison_damage": 0, "img_url": "images/storm_knight.jpg"},
+          {"id": 3, "name": "ウィンド・シルフ", "hp": 220, "max_hp": 220, "pos": (0, 4), "damage": 95, "poison_turns": 0, "poison_damage": 0, "img_url": "images/wind_sylph.jpg"},
+          {"id": 4, "name": "ボルト・ガルーダ", "hp": 480, "max_hp": 480, "pos": (1, 4), "damage": 150, "poison_turns": 0, "poison_damage": 0, "img_url": "images/bolt_garuda.jpg"},
+          {"id": 5, "name": "雷神の化身", "hp": 650, "max_hp": 650, "pos": (2, 4), "damage": 175, "poison_turns": 0, "poison_damage": 0, "img_url": "images/rai_avatar.jpg"},
       ],
       7: [
-          {"id": 0, "name": "ポイズン・トード", "hp": 280, "max_hp": 280, "pos": (0, 3), "damage": 95, "poison_turns": 0, "poison_damage": 0, "img_url": "images/poison_toad.jpg"},
-          {"id": 1, "name": "ヴェノム・スパイダー", "hp": 250, "max_hp": 250, "pos": (1, 3), "damage": 105, "poison_turns": 0, "poison_damage": 0, "img_url": "images/venom_spider.jpg"},
-          {"id": 2, "name": "スワンプ・サーペント", "hp": 380, "max_hp": 380, "pos": (2, 3), "damage": 122, "poison_turns": 0, "poison_damage": 0, "img_url": "images/swamp_serpent.jpg"},
-          {"id": 3, "name": "プラント・ウィップ", "hp": 300, "max_hp": 300, "pos": (0, 4), "damage": 110, "poison_turns": 0, "poison_damage": 0, "img_url": "images/plant_whip.jpg"},
-          {"id": 4, "name": "マッド・アサシン", "hp": 280, "max_hp": 280, "pos": (1, 4), "damage": 130, "poison_turns": 0, "poison_damage": 0, "img_url": "images/mud_assassin.jpg"},
-          {"id": 5, "name": "毒竜ヒドラ", "hp": 550, "max_hp": 550, "pos": (2, 4), "damage": 155, "poison_turns": 0, "poison_damage": 0, "img_url": "images/hydra.jpg"},
+          {"id": 0, "name": "ポイズン・トード", "hp": 380, "max_hp": 380, "pos": (0, 3), "damage": 125, "poison_turns": 0, "poison_damage": 0, "img_url": "images/poison_toad.jpg"},
+          {"id": 1, "name": "ヴェノム・スパイダー", "hp": 340, "max_hp": 340, "pos": (1, 3), "damage": 135, "poison_turns": 0, "poison_damage": 0, "img_url": "images/venom_spider.jpg"},
+          {"id": 2, "name": "スワンプ・サーペント", "hp": 520, "max_hp": 520, "pos": (2, 3), "damage": 155, "poison_turns": 0, "poison_damage": 0, "img_url": "images/swamp_serpent.jpg"},
+          {"id": 3, "name": "プラント・ウィップ", "hp": 410, "max_hp": 410, "pos": (0, 4), "damage": 140, "poison_turns": 0, "poison_damage": 0, "img_url": "images/plant_whip.jpg"},
+          {"id": 4, "name": "マッド・アサシン", "hp": 380, "max_hp": 380, "pos": (1, 4), "damage": 165, "poison_turns": 0, "poison_damage": 0, "img_url": "images/mud_assassin.jpg"},
+          {"id": 5, "name": "毒竜ヒドラ", "hp": 750, "max_hp": 750, "pos": (2, 4), "damage": 195, "poison_turns": 0, "poison_damage": 0, "img_url": "images/hydra.jpg"},
       ],
       8: [
-          {"id": 0, "name": "ブロンズ・ゴーレム", "hp": 420, "max_hp": 420, "pos": (0, 3), "damage": 125, "poison_turns": 0, "poison_damage": 0, "img_url": "images/bronze_golem.jpg"},
-          {"id": 1, "name": "ガーディアン・アイ", "hp": 260, "max_hp": 260, "pos": (1, 3), "damage": 115, "poison_turns": 0, "poison_damage": 0, "img_url": "images/guardian_eye.jpg"},
-          {"id": 2, "name": "マジック・オートマトン", "hp": 350, "max_hp": 350, "pos": (2, 3), "damage": 138, "poison_turns": 0, "poison_damage": 0, "img_url": "images/automaton.jpg"},
-          {"id": 3, "name": "アーク・サーベイヤー", "hp": 310, "max_hp": 310, "pos": (0, 4), "damage": 145, "poison_turns": 0, "poison_damage": 0, "img_url": "images/surveyor.jpg"},
-          {"id": 4, "name": "デストロイ・タンク", "hp": 530, "max_hp": 530, "pos": (1, 4), "damage": 168, "poison_turns": 0, "poison_damage": 0, "img_url": "images/destroy_tank.jpg"},
-          {"id": 5, "name": "古代魔導兵器", "hp": 680, "max_hp": 680, "pos": (2, 4), "damage": 195, "poison_turns": 0, "poison_damage": 0, "img_url": "images/ancient_weapon.jpg"},
+          {"id": 0, "name": "ブロンズ・ゴーレム", "hp": 580, "max_hp": 580, "pos": (0, 3), "damage": 160, "poison_turns": 0, "poison_damage": 0, "img_url": "images/bronze_golem.jpg"},
+          {"id": 1, "name": "ガーディアン・アイ", "hp": 360, "max_hp": 360, "pos": (1, 3), "damage": 150, "poison_turns": 0, "poison_damage": 0, "img_url": "images/guardian_eye.jpg"},
+          {"id": 2, "name": "マジック・オートマトン", "hp": 480, "max_hp": 480, "pos": (2, 3), "damage": 175, "poison_turns": 0, "poison_damage": 0, "img_url": "images/automaton.jpg"},
+          {"id": 3, "name": "アーク・サーベイヤー", "hp": 420, "max_hp": 420, "pos": (0, 4), "damage": 185, "poison_turns": 0, "poison_damage": 0, "img_url": "images/surveyor.jpg"},
+          {"id": 4, "name": "デストロイ・タンク", "hp": 720, "max_hp": 720, "pos": (1, 4), "damage": 210, "poison_turns": 0, "poison_damage": 0, "img_url": "images/destroy_tank.jpg"},
+          {"id": 5, "name": "古代魔導兵器", "hp": 920, "max_hp": 920, "pos": (2, 4), "damage": 245, "poison_turns": 0, "poison_damage": 0, "img_url": "images/ancient_weapon.jpg"},
       ],
       9: [
-          {"id": 0, "name": "デーモン・スカウト", "hp": 400, "max_hp": 400, "pos": (0, 3), "damage": 155, "poison_turns": 0, "poison_damage": 0, "img_url": "images/demon_scout.jpg"},
-          {"id": 1, "name": "ヘル・ハウンド", "hp": 450, "max_hp": 450, "pos": (1, 3), "damage": 170, "poison_turns": 0, "poison_damage": 0, "img_url": "images/hell_hound.jpg"},
-          {"id": 2, "name": "サキュバス", "hp": 360, "max_hp": 360, "pos": (2, 3), "damage": 150, "poison_turns": 0, "poison_damage": 0, "img_url": "images/succubus.jpg"},
-          {"id": 3, "name": "アビス・ナイト", "hp": 600, "max_hp": 600, "pos": (0, 4), "damage": 190, "poison_turns": 0, "poison_damage": 0, "img_url": "images/abyss_knight.jpg"},
-          {"id": 4, "name": "ケルベロス", "hp": 660, "max_hp": 660, "pos": (1, 4), "damage": 215, "poison_turns": 0, "poison_damage": 0, "img_url": "images/cerberus.jpg"},
-          {"id": 5, "name": "魔界貴族ロード", "hp": 800, "max_hp": 800, "pos": (2, 4), "damage": 245, "poison_turns": 0, "poison_damage": 0, "img_url": "images/demon_lord.jpg"},
+          {"id": 0, "name": "デーモン・スカウト", "hp": 550, "max_hp": 550, "pos": (0, 3), "damage": 200, "poison_turns": 0, "poison_damage": 0, "img_url": "images/demon_scout.jpg"},
+          {"id": 1, "name": "ヘル・ハウンド", "hp": 620, "max_hp": 620, "pos": (1, 3), "damage": 220, "poison_turns": 0, "poison_damage": 0, "img_url": "images/hell_hound.jpg"},
+          {"id": 2, "name": "サキュバス", "hp": 490, "max_hp": 490, "pos": (2, 3), "damage": 195, "poison_turns": 0, "poison_damage": 0, "img_url": "images/succubus.jpg"},
+          {"id": 3, "name": "アビス・ナイト", "hp": 820, "max_hp": 820, "pos": (0, 4), "damage": 245, "poison_turns": 0, "poison_damage": 0, "img_url": "images/abyss_knight.jpg"},
+          {"id": 4, "name": "ケルベロス", "hp": 900, "max_hp": 900, "pos": (1, 4), "damage": 275, "poison_turns": 0, "poison_damage": 0, "img_url": "images/cerberus.jpg"},
+          {"id": 5, "name": "魔界貴族ロード", "hp": 1100, "max_hp": 1100, "pos": (2, 4), "damage": 315, "poison_turns": 0, "poison_damage": 0, "img_url": "images/demon_lord.jpg"},
       ],
       10: [
-          {"id": 0, "name": "ダーク・ガーディアン", "hp": 700, "max_hp": 700, "pos": (0, 3), "damage": 200, "poison_turns": 0, "poison_damage": 0, "img_url": "images/dark_guardian.jpg"},
-          {"id": 1, "name": "カオス・メイジ", "hp": 550, "max_hp": 550, "pos": (1, 3), "damage": 230, "poison_turns": 0, "poison_damage": 0, "img_url": "images/chaos_mage.jpg"},
-          {"id": 2, "name": "ドレッド・ナイト", "hp": 760, "max_hp": 760, "pos": (2, 3), "damage": 250, "poison_turns": 0, "poison_damage": 0, "img_url": "images/dread_knight.jpg"},
-          {"id": 3, "name": "シャドウ・ドラゴン", "hp": 950, "max_hp": 950, "pos": (0, 4), "damage": 280, "poison_turns": 0, "poison_damage": 0, "img_url": "images/shadow_dragon.jpg"},
-          {"id": 4, "name": "魔王の側近", "hp": 1100, "max_hp": 1100, "pos": (1, 4), "damage": 310, "poison_turns": 0, "poison_damage": 0, "img_url": "images/boss_aide.jpg"},
-          {"id": 5, "name": "魔王アーク・デストロイヤー", "hp": 1600, "max_hp": 1600, "pos": (2, 4), "damage": 380, "poison_turns": 0, "poison_damage": 0, "img_url": "images/last_boss.jpg"},
+          {"id": 0, "name": "ダーク・ガーディアン", "hp": 980, "max_hp": 980, "pos": (0, 3), "damage": 260, "poison_turns": 0, "poison_damage": 0, "img_url": "images/dark_guardian.jpg"},
+          {"id": 1, "name": "カオス・メイジ", "hp": 760, "max_hp": 760, "pos": (1, 3), "damage": 300, "poison_turns": 0, "poison_damage": 0, "img_url": "images/chaos_mage.jpg"},
+          {"id": 2, "name": "ドレッド・ナイト", "hp": 1050, "max_hp": 1050, "pos": (2, 3), "damage": 325, "poison_turns": 0, "poison_damage": 0, "img_url": "images/dread_knight.jpg"},
+          {"id": 3, "name": "シャドウ・ドラゴン", "hp": 1300, "max_hp": 1300, "pos": (0, 4), "damage": 365, "poison_turns": 0, "poison_damage": 0, "img_url": "images/shadow_dragon.jpg"},
+          {"id": 4, "name": "魔王の側近", "hp": 1500, "max_hp": 1500, "pos": (1, 4), "damage": 405, "poison_turns": 0, "poison_damage": 0, "img_url": "images/boss_aide.jpg"},
+          {"id": 5, "name": "魔王アーク・デストロイヤー", "hp": 2500, "max_hp": 2500, "pos": (2, 4), "damage": 500, "poison_turns": 0, "poison_damage": 0, "img_url": "images/last_boss.jpg"},
       ],
   }
   st.session_state.enemies = st.session_state.stage_enemies[st.session_state.stage]
