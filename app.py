@@ -595,8 +595,8 @@ if st.session_state.turn_phase == "player_turn":
   # 「攻撃範囲内に敵がいない」かつ「上または下の存在する味方キャラが生存している」場合に自動パス
   has_surviving_adjacent_ally = (up_exists and up_ally_alive) or (down_exists and down_ally_alive)
 
-  if not can_attack and has_surviving_adjacent_ally:
-    add_log(f"💤 {current_p['name']} は攻撃範囲に敵がおらず、周囲に生存している味方がいるため、自動で待機しました。")
+  if not can_move and not can_attack and has_surviving_adjacent_ally:
+    add_log(f"💤 {current_p['name']} は移動も攻撃もできず、周囲に生存している味方がいるため、自動で待機しました。")
     st.session_state.turn_phase = "player_turn"
     st.session_state.current_actor_idx += 1
     st.rerun()
