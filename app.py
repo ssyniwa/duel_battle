@@ -327,7 +327,6 @@ if "initialized" not in st.session_state:
       },
   ]
   # 敵キャラ6体（ステータス強化版）
-  # 限界を超えてインフレを極めた敵キャラのステータス定義
   st.session_state.stage_enemies = {
       1: [
           {"id": 0, "name": "ゴブリン・ガード", "hp": 40, "max_hp": 40, "pos": (0, 3), "damage": 8, "poison_turns": 0, "poison_damage": 0, "img_url": "images/goblin_guard.jpg"},
@@ -369,7 +368,6 @@ if "initialized" not in st.session_state:
           {"id": 4, "name": "ブリザード・スピリット", "hp": 110, "max_hp": 110, "pos": (1, 4), "damage": 46, "poison_turns": 0, "poison_damage": 0, "img_url": "images/blizzard_spirit.jpg"},
           {"id": 5, "name": "フロスト・ジャイアント", "hp": 200, "max_hp": 200, "pos": (2, 4), "damage": 58, "poison_turns": 0, "poison_damage": 0, "img_url": "images/frost_giant.jpg"},
       ],
-      # --- ここから過激なインフレステージ (6〜10) ---
       6: [
           {"id": 0, "name": "サンダー・バード", "hp": 300, "max_hp": 300, "pos": (0, 3), "damage": 110, "poison_turns": 0, "poison_damage": 0, "img_url": "images/thunder_bird.jpg"},
           {"id": 1, "name": "ライトニング・エレメンタル", "hp": 260, "max_hp": 260, "pos": (1, 3), "damage": 120, "poison_turns": 0, "poison_damage": 0, "img_url": "images/lightning_elemental.jpg"},
@@ -412,10 +410,11 @@ if "initialized" not in st.session_state:
       ],
   }
   st.session_state.enemies = st.session_state.stage_enemies[st.session_state.stage]
-  st.session_state.turn_phase = "player_turn"
-  st.session_state.current_actor_idx = 0
+  st.session_state.current_actor_idx = 0  # プレイヤーのインデックス
+  st.session_state.current_enemy_idx = 0  # 敵のインデックス
+  st.session_state.turn_phase = "player_turn"  # "player_turn" または "enemy_turn"
   st.session_state.battle_log = [
-      f"ステージ {st.session_state.stage} 開始！プレイヤー側のターンです。スキルカードを選択してください。"
+      f"ステージ {st.session_state.stage} 開始！味方1体が行動します。"
   ]
 
 
@@ -425,16 +424,11 @@ def add_log(msg):
 
 # --- 敵の列シフト処理 (4列目 -> 3列目) ---
 def update_enemy_positions():
-  # 生存している敵のみ対象
   alive_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
-  
-  # 各行(row 0, 1, 2)ごとにチェック
   for r in range(3):
-    # 列3と列4にいる生存敵を特定
     col3_enemy = next((e for e in alive_enemies if e["pos"] == (r, 3)), None)
     col4_enemy = next((e for e in alive_enemies if e["pos"] == (r, 4)), None)
     
-    # 3列目が不在で、4列目に敵がいる場合、4列目の敵を3列目に移動
     if col3_enemy is None and col4_enemy is not None:
       col4_enemy["pos"] = (r, 3)
       add_log(f"🔄 {col4_enemy['name']} が空いた3列目に前進しました！")
@@ -450,7 +444,6 @@ if not living_enemies:
   if st.session_state.stage < 10:
     st.success(f"🎉 ステージ {st.session_state.stage} クリア！")
     
-    # --- ステージクリアによる味方全体の強化処理 ---
     for p in st.session_state.players:
       p["max_hp"] = int(p["max_hp"] * 1.2)
       p["hp"] = p["max_hp"]
@@ -469,8 +462,9 @@ if not living_enemies:
       st.session_state.stage += 1
       import copy
       st.session_state.enemies = copy.deepcopy(st.session_state.stage_enemies[st.session_state.stage])
-      st.session_state.turn_phase = "player_turn"
       st.session_state.current_actor_idx = 0
+      st.session_state.current_enemy_idx = 0
+      st.session_state.turn_phase = "player_turn"
       add_log(f"ステージ {st.session_state.stage} に突入しました！")
       st.rerun()
   else:
@@ -487,7 +481,7 @@ if not living_players:
     st.rerun()
   st.stop()
 
-# --- 3×6 バトルフィールドの描画 (Streamlitのカラムを活用) ---
+# --- 3×6 バトルフィールドの描画 ---
 st.subheader("🗺️ 戦場マップ (3行 × 6列)")
 
 grid_map = [[None for _ in range(6)] for _ in range(3)]
@@ -500,7 +494,6 @@ for e in living_enemies:
   r, c = e["pos"]
   grid_map[r][c] = ("enemy", e)
 
-# 現在の行動キャラの取得
 current_p = living_players[
     st.session_state.current_actor_idx % len(living_players)
 ] if living_players else None
@@ -511,28 +504,23 @@ for r in range(3):
     with cols[c]:
       cell_content = grid_map[r][c]
       
-      # 攻撃可能ハイライト判定（プレイヤーのターンかつ行動キャラが存在する場合）
       is_attackable = False
       if st.session_state.turn_phase == "player_turn" and current_p and cell_content:
         etype, edata = cell_content
         if etype == "enemy":
           pr, pc = current_p["pos"]
           er, ec = edata["pos"]
-          # 各カードの射程範囲をチェックし、どれか一つでも届くなら攻撃可能とする
           for card in current_p["cards"]:
             if card["type"] == "attack":
               if any((pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]):
                 is_attackable = True
                 break
 
-      # ハイライト用の枠線カラーやスタイル設定
-      border_style = "border: 2px solid #ff4b4b;" if is_attackable else "border: 1px solid #ddd;"
-      
       with st.container(border=True):
         if cell_content is None:
           st.markdown(
               f"""
-                  <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px; {border_style}">
+                  <div style="height: 70px; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 12px;">
                       ({r},{c})
                   </div>
                   """,
@@ -546,7 +534,6 @@ for r in range(3):
             hp_ratio = max(0.0, min(1.0, data["hp"] / data["max_hp"]))
             st.progress(hp_ratio, text=f"HP: {data['hp']}/{data['max_hp']}")
           else:
-            # 攻撃可能な敵にはマークを付与して視覚的にわかりやすくする
             highlight_label = " 🎯【攻撃可能】" if is_attackable else ""
             st.image(data["img_url"], use_container_width=True)
             st.markdown(f"<div style='font-size:11px; text-align:center;'><b>{data['name']}</b>{highlight_label}</div>", unsafe_allow_html=True)
@@ -555,9 +542,15 @@ for r in range(3):
             
 st.markdown("---")
 
-# --- フェーズごとの処理 ---
+# --- 交互ターン制の処理 ---
 if st.session_state.turn_phase == "player_turn":
-  # --- ターン開始時の毒ダメージ処理 ---
+  # プレイヤーのターン開始時：現在の行動キャラが毒状態ならダメージ処理
+  if current_p and current_p["hp"] > 0:
+    # 敵からの毒ではないが、敵側のターン開始時に毒チェックをする仕様に合わせる場合はここで敵の毒処理を行う
+    pass
+
+  # 敵全体の毒継続ダメージはプレイヤーのターンが回ってきたタイミング等で一括処理するか、各キャラ行動時に処理
+  # ここでは従来通り生存する全敵の毒処理を行う
   for e in living_enemies:
     if e["hp"] > 0 and e["poison_turns"] > 0:
       e["hp"] -= e["poison_damage"]
@@ -566,14 +559,12 @@ if st.session_state.turn_phase == "player_turn":
       e["poison_turns"] -= 1
       add_log(f"☠️ {e['name']} は毒により {e['poison_damage']} の継続ダメージを受けた！（残り {e['poison_turns']} ターン）")
   
-  # 毒ダメージ後の敵の死亡・シフト処理
   update_enemy_positions()
-  
-  # 生存リストを更新
   living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
-  current_p = living_players[
-      st.session_state.current_actor_idx % len(living_players)
-  ]
+  if not living_enemies or not living_players:
+    st.rerun()
+
+  current_p = living_players[st.session_state.current_actor_idx % len(living_players)]
 
   col_info, col_action = st.columns([1, 3])
   with col_info:
@@ -603,7 +594,6 @@ if st.session_state.turn_phase == "player_turn":
       target_enemy = player_options[selected_label]
 
   st.markdown("#### 🃏 スキルカード選択")
-
   card_cols = st.columns(len(current_p["cards"]))
 
   for idx, card in enumerate(current_p["cards"]):
@@ -629,7 +619,6 @@ if st.session_state.turn_phase == "player_turn":
               unsafe_allow_html=True,
           )
 
-        # カード使用ボタン
         if st.button("このカードを使う", key=f"card_{current_p['id']}_{idx}"):
           if card["type"] == "move":
             pr, pc = current_p["pos"]
@@ -664,10 +653,8 @@ if st.session_state.turn_phase == "player_turn":
                 if target_enemy["hp"] < 0:
                   target_enemy["hp"] = 0
                 
-                # --- 敵撃破時の列シフトチェック ---
                 update_enemy_positions()
 
-                # --- 毒の付与処理 ---
                 hit_msg = f"✨ {current_p['name']} の '{card['name']}' が {target_enemy['name']} に命中！ {card['damage']} のダメージ！"
                 if "poison_turns" in card:
                   target_enemy["poison_turns"] = card["poison_turns"]
@@ -689,44 +676,42 @@ if st.session_state.turn_phase == "player_turn":
                 f" 味方全員のHPが {heal_amount} 回復した！"
             )
 
-          # ターン進行
-          st.session_state.current_actor_idx += 1
-          if st.session_state.current_actor_idx >= len(living_players):
-            st.session_state.turn_phase = "enemy_turn"
-            st.session_state.current_actor_idx = 0
-            add_log(
-                "🔄 プレイヤー全員の行動終了。敵の反撃ターンに移行します！"
-            )
+          # 1体の行動が終了したら、即座に敵のターン（フェーズ）に切り替える
+          st.session_state.turn_phase = "enemy_turn"
+          st.session_state.current_actor_idx += 1  # 次回番が回ってきた時のためにインクリメントしておく
           st.rerun()
 
   if st.button("このキャラクターの行動をパスする"):
     add_log(f"💤 {current_p['name']} はその場で待機しました。")
+    st.session_state.turn_phase = "enemy_turn"
     st.session_state.current_actor_idx += 1
-    if st.session_state.current_actor_idx >= len(living_players):
-      st.session_state.turn_phase = "enemy_turn"
-      st.session_state.current_actor_idx = 0
-      add_log("🔄 敵の反撃ターンに移行します！")
     st.rerun()
 
 elif st.session_state.turn_phase == "enemy_turn":
-  st.warning("⚠️ **敵の反撃ターン中**です。")
-  if st.button("👹 敵の攻撃を実行してプレイヤーターンに戻る", type="primary"):
-    for e in living_enemies:
-      if not living_players:
-        break
+  st.warning("⚠️ **敵のターン（個別行動）**です。")
+  
+  if living_enemies:
+    # 生存している敵の中から、現在のインデックスに対応する1体を選ぶ
+    active_enemy = living_enemies[st.session_state.current_enemy_idx % len(living_enemies)]
+    
+    if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
       target_p = random.choice(living_players)
-      target_p["hp"] -= e["damage"]
+      target_p["hp"] -= active_enemy["damage"]
       if target_p["hp"] < 0:
         target_p["hp"] = 0
       add_log(
-          f"💥 {e['name']} の反撃！ {target_p['name']} に"
-          f" {e['damage']} のダメージ！"
+          f"💥 {active_enemy['name']} の攻撃！ {target_p['name']} に"
+          f" {active_enemy['damage']} のダメージ！"
       )
-      living_players = [p for p in st.session_state.players if p["hp"] > 0]
-
+      
+      # 次の敵へインデックスを進める
+      st.session_state.current_enemy_idx += 1
+      # プレイヤーのターンに戻す
+      st.session_state.turn_phase = "player_turn"
+      add_log(f"🛡️ 敵の行動終了。次の味方のターンです！")
+      st.rerun()
+  else:
     st.session_state.turn_phase = "player_turn"
-    st.session_state.current_actor_idx = 0
-    add_log("🛡️ 敵のターンが終了しました。プレイヤー側のターンです！")
     st.rerun()
 
 # --- バトルログ ---
