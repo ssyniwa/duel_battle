@@ -544,13 +544,7 @@ st.markdown("---")
 
 # --- 交互ターン制の処理 ---
 if st.session_state.turn_phase == "player_turn":
-  # プレイヤーのターン開始時：現在の行動キャラが毒状態ならダメージ処理
-  if current_p and current_p["hp"] > 0:
-    # 敵からの毒ではないが、敵側のターン開始時に毒チェックをする仕様に合わせる場合はここで敵の毒処理を行う
-    pass
-
-  # 敵全体の毒継続ダメージはプレイヤーのターンが回ってきたタイミング等で一括処理するか、各キャラ行動時に処理
-  # ここでは従来通り生存する全敵の毒処理を行う
+  # 生存している全敵の毒処理
   for e in living_enemies:
     if e["hp"] > 0 and e["poison_turns"] > 0:
       e["hp"] -= e["poison_damage"]
@@ -565,6 +559,36 @@ if st.session_state.turn_phase == "player_turn":
     st.rerun()
 
   current_p = living_players[st.session_state.current_actor_idx % len(living_players)]
+
+  # --- 自動パス判定：移動も攻撃も不可能な状態かチェック ---
+  can_move = False
+  can_attack = False
+
+  for card in current_p["cards"]:
+    if card["type"] == "move":
+      pr, pc = current_p["pos"]
+      nr, nc = pr + card["dr"], pc + card["dc"]
+      if 0 <= nr < 3 and 0 <= nc < 6:
+        occupied = any(p["pos"] == (nr, nc) for p in living_players) or any(e["pos"] == (nr, nc) for e in living_enemies)
+        if not occupied:
+          can_move = True
+    elif card["type"] == "attack":
+      pr, pc = current_p["pos"]
+      for e in living_enemies:
+        er, ec = e["pos"]
+        if any((pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]):
+          can_attack = True
+          break
+    elif card["type"] == "heal":
+      can_attack = True # 回復スキル持ちは常に行動可能とみなす
+
+  # 移動も攻撃（回復含む）もできない場合は自動でパス
+  if not can_move and not can_attack:
+    add_log(f"💤 {current_p['name']} は移動も攻撃もできないため、自動で待機しました。")
+    st.session_state.turn_phase = "enemy_turn"
+    st.session_state.current_actor_idx += 1
+    st.rerun()
+  # ----------------------------------------------------
 
   col_info, col_action = st.columns([1, 3])
   with col_info:
