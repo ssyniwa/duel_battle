@@ -24,10 +24,10 @@ if "initialized" not in st.session_state:
           "cards": [
               {
                   "type": "move",
-                  "name": "前進",
-                  "dr": 0,
-                  "dc": 1,
-                  "desc": "前方に1マス移動します。",
+                  "name": "下進",
+                  "dr": 1,
+                  "dc": 0,
+                  "desc": "下方に1マス移動します。",
                   "img_url": "images/knight.jpg",
               },
               {
@@ -75,17 +75,17 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "ダッシュ",
-                  "dr": 0,
-                  "dc": 1,
-                  "desc": "前方に1マス素早く移動。",
+                  "dr": 1,
+                  "dc": 0,
+                  "desc": "下方に1マス素早く移動。",
                   "img_url": "images/warrior.jpg",
               },
               {
                   "type": "move",
                   "name": "後退ダッシュ",
-                  "dr": 0,
-                  "dc": -1,
-                  "desc": "後方に1マス素早く移動。",
+                  "dr": -1,
+                  "dc": 0,
+                  "desc": "上方に1マス素早く移動。",
                   "img_url": "images/warrior.jpg",
               },
               {
@@ -183,9 +183,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "テレポート歩行",
-                  "dr": 0,
-                  "dc": 1,
-                  "desc": "前方に1マス位置を調整する。",
+                  "dr": 1,
+                  "dc": 0,
+                  "desc": "下方に1マス位置を調整する。",
                   "img_url": "images/mage.jpg",
               },
               {
@@ -233,9 +233,17 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "バックペダル",
-                  "dr": 0,
-                  "dc": -1,
-                  "desc": "後方に1マス下がって距離を取る。",
+                  "dr": 1,
+                  "dc": 0,
+                  "desc": "下方に1マス下がって距離を取る。",
+                  "img_url": "images/archer.jpg",
+              },
+              {
+                  "type": "move",
+                  "name": "バックペダル2",
+                  "dr": -1,
+                  "dc": 0,
+                  "desc": "上方に1マス下がって距離を取る。",
                   "img_url": "images/archer.jpg",
               },
               {
@@ -287,9 +295,9 @@ if "initialized" not in st.session_state:
               {
                   "type": "move",
                   "name": "聖者の歩み",
-                  "dr": 0,
-                  "dc": -1,
-                  "desc": "後方に1マス進む。",
+                  "dr":-1,
+                  "dc": 0,
+                  "desc": "上方に1マス進む。",
                   "img_url": "images/priest.jpg",
               },
               {
