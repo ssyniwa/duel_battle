@@ -620,15 +620,40 @@ if st.session_state.turn_phase == "player_turn":
 
   with col_action:
     st.markdown("### 🎯 ターゲットの選択")
-    target_type_tab = st.radio("行動対象の選択", ["敵を攻撃する", "味方を回復する"], horizontal=True)
+    
+    # --- 【変更】プリースト（id=5）のターンのみ「味方を回復する」を選択肢に含める ---
+    if current_p["id"] == 5:
+      target_type_tab = st.radio("行動対象の選択", ["敵を攻撃する", "味方を回復する"], horizontal=True)
+    else:
+      target_type_tab = "敵を攻撃する"
+      st.markdown("<div style='font-size: 14px; color: #666; margin-bottom: 10px;'>行動対象: <b>敵を攻撃する</b></div>", unsafe_allow_html=True)
     
     if target_type_tab == "敵を攻撃する":
-      enemy_options = {
-          f"{e['name']} (位置: {e['pos']}, HP: {e['hp']})": e
-          for e in living_enemies
-      }
-      selected_label = st.selectbox("ターゲットの敵を選択", list(enemy_options.keys()))
-      target_enemy = enemy_options[selected_label]
+      # --- 【変更】現在選択しているキャラクターの攻撃カードの範囲内にいる敵のみをフィルタリング ---
+      attackable_enemies = []
+      pr, pc = current_p["pos"]
+      
+      for e in living_enemies:
+        er, ec = e["pos"]
+        is_in_range = False
+        for card in current_p["cards"]:
+          if card["type"] == "attack":
+            if any((pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]):
+              is_in_range = True
+              break
+        if is_in_range:
+          attackable_enemies.append(e)
+          
+      if attackable_enemies:
+        enemy_options = {
+            f"{e['name']} (位置: {e['pos']}, HP: {e['hp']})": e
+            for e in attackable_enemies
+        }
+        selected_label = st.selectbox("ターゲットの敵を選択", list(enemy_options.keys()))
+        target_enemy = enemy_options[selected_label]
+      else:
+        st.warning("⚠️ 現在のポジションから攻撃範囲内にいる敵がいません。移動スキルやパスを使用してください。")
+        target_enemy = None
     else:
       player_options = {
           f"{p['name']} (HP: {p['hp']}/{p['max_hp']})": p
@@ -651,11 +676,16 @@ if st.session_state.turn_phase == "player_turn":
             unsafe_allow_html=True,
         )
         if card["type"] == "attack":
-          st.markdown(
-              f"<div style='font-size: 12px; color: #d32f2f;'><b>威力:</b>"
-              f" {card['damage']}</div>",
-              unsafe_allow_html=True,
-          )
+            if target_type_tab != "敵を攻撃する":
+              add_log(f"⚠️ 攻撃スキルは敵を選択して実行してください。")
+            elif target_enemy is None:
+              add_log(f"❌ 攻撃可能なターゲットが選択されていません。")
+            else:
+              pr, pc = current_p["pos"]
+              er, ec = target_enemy["pos"]
+              valid_hit = any(
+                  (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
+              )
         elif card["type"] == "heal":
           st.markdown(
               f"<div style='font-size: 12px; color: #2e7d32;'><b>回復量:</b>"
