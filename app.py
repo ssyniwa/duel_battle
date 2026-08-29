@@ -585,7 +585,7 @@ if st.session_state.turn_phase == "player_turn":
   # 移動も攻撃（回復含む）もできない場合は自動でパス
   if not can_move and not can_attack:
     add_log(f"💤 {current_p['name']} は移動も攻撃もできないため、自動で待機しました。")
-    st.session_state.turn_phase = "enemy_turn"
+    st.session_state.turn_phase = "player_turn"  # 敵のターンにせず、味方のターンのまま継続
     st.session_state.current_actor_idx += 1
     st.rerun()
   # ----------------------------------------------------
@@ -715,7 +715,7 @@ if st.session_state.turn_phase == "player_turn":
 
   if st.button("このキャラクターの行動をパスする"):
     add_log(f"💤 {current_p['name']} はその場で待機しました。")
-    st.session_state.turn_phase = "enemy_turn"
+    st.session_state.turn_phase = "player_turn"  # 敵のターンにせず、味方のターンのまま継続
     st.session_state.current_actor_idx += 1
     st.rerun()
 
