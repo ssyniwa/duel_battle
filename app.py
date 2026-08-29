@@ -675,17 +675,14 @@ if st.session_state.turn_phase == "player_turn":
             f"<div style='font-size: 12px;'>{card['desc']}</div>",
             unsafe_allow_html=True,
         )
+        
+        # --- 【追加】攻撃カードの威力、回復カードの回復力をカード詳細に表示 ---
         if card["type"] == "attack":
-            if target_type_tab != "敵を攻撃する":
-              add_log(f"⚠️ 攻撃スキルは敵を選択して実行してください。")
-            elif target_enemy is None:
-              add_log(f"❌ 攻撃可能なターゲットが選択されていません。")
-            else:
-              pr, pc = current_p["pos"]
-              er, ec = target_enemy["pos"]
-              valid_hit = any(
-                  (pr + dr, pc + dc) == (er, ec) for dr, dc in card["range"]
-              )
+          st.markdown(
+              f"<div style='font-size: 12px; color: #d32f2f;'><b>威力:</b>"
+              f" {card['damage']}</div>",
+              unsafe_allow_html=True,
+          )
         elif card["type"] == "heal":
           st.markdown(
               f"<div style='font-size: 12px; color: #2e7d32;'><b>回復量:</b>"
@@ -694,6 +691,7 @@ if st.session_state.turn_phase == "player_turn":
           )
 
         if st.button("このカードを使う", key=f"card_{current_p['id']}_{idx}"):
+          # (以降の処理はそのまま)
           if card["type"] == "move":
             pr, pc = current_p["pos"]
             nr, nc = pr + card["dr"], pc + card["dc"]
