@@ -788,7 +788,7 @@ if st.session_state.turn_phase == "player_turn":
 
           # 1体の行動が終了したら、即座に敵のターン（フェーズ）に切り替える
           st.session_state.turn_phase = "enemy_turn"
-          advance_to_next_player()
+          
           st.rerun()
 
   if st.button("このキャラクターの行動をパスする"):
