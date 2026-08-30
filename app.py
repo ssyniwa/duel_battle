@@ -3,7 +3,7 @@ import streamlit as st
 
 # --- ページ設定 ---
 st.set_page_config(
-    page_title="Tactical Duel Battle - Visual Edition",
+    page_title="Tactical Party Battle",
     layout="wide",
     page_icon="⚔️",
 )
