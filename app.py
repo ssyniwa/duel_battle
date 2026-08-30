@@ -291,6 +291,7 @@ if "initialized" not in st.session_state:
           "max_hp": 50,
           "pos": (2, 1),
           "img_url": "images/priest.jpg",
+          "revive_used": False,
           "cards": [
               {
                   "type": "move",
@@ -475,6 +476,8 @@ if not living_enemies:
     for p in st.session_state.players:
       p["max_hp"] = int(p["max_hp"] * 1.2)
       p["hp"] = p["max_hp"]
+      if p["id"] == 5:
+        p["revive_used"] = False  # 次のステージでは復活効果を再使用可能にする
       
       for card in p["cards"]:
         if "damage" in card:
@@ -825,6 +828,13 @@ elif st.session_state.turn_phase == "enemy_turn":
       target_p["hp"] -= actual_damage
       if target_p["hp"] < 0:
         target_p["hp"] = 0
+
+      # --- 【追加】プリーストの「1回のみHP1で耐える」判定 ---
+      if target_p["id"] == 5 and target_p["hp"] == 0 and not target_p.get("revive_used", False):
+        target_p["hp"] = 1
+        target_p["revive_used"] = True
+        add_log(f"✨ プリーストは奇跡の加護により、致命傷をHP1で踏みとどまった！")
+      # --------------------------------------------------
         
       if is_softened:
         add_log(
