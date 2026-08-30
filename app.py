@@ -445,13 +445,16 @@ def advance_to_next_player():
   living = [p for p in st.session_state.players if p["hp"] > 0]
   if not living:
     return
-  # 現在のIDのインデックスを探す
-  ids = [p["id"] for p in living]
-  if st.session_state.current_actor_id in ids:
-    curr_idx = ids.index(st.session_state.current_actor_id)
-    next_idx = (curr_idx + 1) % len(living)
-  else:
-    next_idx = 0
+
+  # 現在の actor_id を持つプレイヤーの、生存リスト内での位置（インデックス）を探す
+  current_idx = 0
+  for i, p in enumerate(living):
+    if p["id"] == st.session_state.current_actor_id:
+      current_idx = i
+      break
+
+  # 次の人のインデックス
+  next_idx = (current_idx + 1) % len(living)
   st.session_state.current_actor_id = living[next_idx]["id"]
 # --- 勝利・敗北判定 ---
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
@@ -802,7 +805,7 @@ elif st.session_state.turn_phase == "enemy_turn":
   
   if living_enemies:
     # 敵の数が減った際のインデックスオーバーを防ぐため、ここで確実に剰余を取る
-    st.session_state.current_enemy_idx = st.session_state.current_enemy_idx % len(living_enemies)
+    
     active_enemy = living_enemies[st.session_state.current_enemy_idx]
     
     if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
