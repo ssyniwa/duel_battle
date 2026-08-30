@@ -191,7 +191,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "メテオストライク",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (1, 3)],
                   "damage": 35,
                   "desc": "遠く離れた2〜3マス先の敵を焼く。",
                   "img_url": "images/mage_skill1.jpg",
@@ -199,7 +199,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ロックバレット",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (1, 3)],
                   "damage": 30,
                   "desc": "岩属性：巨大な岩を生成して激突させる。",
                   "img_url": "images/mage_skill2.jpg",
@@ -207,7 +207,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ミラージュフレア",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (1, 3)],
                   "damage": 32,
                   "desc": "幻属性：幻影の炎で敵の精神を揺さぶる。",
                   "img_url": "images/mage_skill3.jpg",
@@ -215,7 +215,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "メテオライトフォール",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (1, 3)],
                   "damage": 45,
                   "desc": "岩・幻：星屑を纏った隕石を落下させ大爆発。",
                   "img_url": "images/mage_skill4.jpg",
@@ -249,7 +249,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ウォータースナイプショット",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (-1, 2)],
                   "damage": 25,
                   "desc": "直線上の遠くの敵を正確に射抜く。",
                   "img_url": "images/archer_skill1.jpg",
@@ -257,7 +257,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "アクアニードル",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (-1, 2)],
                   "damage": 22,
                   "desc": "水属性：高圧の水流の矢を放つ。",
                   "img_url": "images/archer_skill2.jpg",
@@ -265,7 +265,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ポイズンスナイプ",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (-1, 2)],
                   "damage": 20,
                   "poison_turns": 3,
                   "p_damage": 5,
@@ -275,7 +275,7 @@ if "initialized" not in st.session_state:
               {
                   "type": "attack",
                   "name": "ベノムタイダル",
-                  "range": [(0, 2), (0, 3)],
+                  "range": [(0, 2), (0, 3), (1, 2), (-1, 2)],
                   "damage": 30,
                   "poison_turns": 2,
                   "p_damage": 8,
