@@ -588,9 +588,7 @@ if st.session_state.turn_phase == "player_turn":
     st.rerun()
 
   # =================【追加】ターン順のズレ自動補正 =================
-  # 前回の行動者より後ろにいる生存者を正しく検索してインデックスを調整する
-  if living_players:
-    st.session_state.current_actor_idx = st.session_state.current_actor_idx % len(living_players)
+  advance_to_next_player()
   # ===============================================================
 
   # 現在のIDを持つ生存プレイヤーを探す。存在しない（倒された）場合は最初の生存プレイヤーにフォールバック
