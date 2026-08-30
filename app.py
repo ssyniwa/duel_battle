@@ -805,10 +805,11 @@ elif st.session_state.turn_phase == "enemy_turn":
   
   if living_enemies:
     # 敵の数が減った際のインデックスオーバーを防ぐため、ここで確実に剰余を取る
-    
+    st.session_state.current_enemy_idx %= len(living_enemies)
     active_enemy = living_enemies[st.session_state.current_enemy_idx]
     
     if st.button(f"👹 {active_enemy['name']} の行動を実行する", type="primary"):
+      # (以降の処理)
       target_p = min(living_players, key=lambda p: (p["pos"][1], p["hp"]))
       
       import random as rand
