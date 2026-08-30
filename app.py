@@ -467,7 +467,7 @@ def advance_to_next_player():
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
 
-st.title(f"⚔️ タクティカル・デュエルバトル (ステージ {st.session_state.stage} / 10)")
+st.title(f"⚔️ タクティカル・パーティバトル (ステージ {st.session_state.stage} / 10)")
 
 if not living_enemies:
   if st.session_state.stage < 10:
