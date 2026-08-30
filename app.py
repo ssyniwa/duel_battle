@@ -442,20 +442,26 @@ def update_enemy_positions():
       add_log(f"🔄 {col4_enemy['name']} が空いた3列目に前進しました！")
 
 def advance_to_next_player():
-  living = [p for p in st.session_state.players if p["hp"] > 0]
+  # 全プレイヤーのリスト（元の順番を保持）
+  all_players = st.session_state.players
+  living = [p for p in all_players if p["hp"] > 0]
   if not living:
     return
 
-  # 現在の actor_id を持つプレイヤーの、生存リスト内での位置（インデックス）を探す
-  current_idx = 0
-  for i, p in enumerate(living):
+  # 現在の actor_id を持つプレイヤーの、全プレイヤーリスト中でのインデックスを探す
+  current_all_idx = 0
+  for i, p in enumerate(all_players):
     if p["id"] == st.session_state.current_actor_id:
-      current_idx = i
+      current_all_idx = i
       break
 
-  # 次の人のインデックス
-  next_idx = (current_idx + 1) % len(living)
-  st.session_state.current_actor_id = living[next_idx]["id"]
+  # 現在の位置から時計回り（リストの次）に探して、最初に遭遇する「生存しているプレイヤー」を次の手番にする
+  for i in range(1, len(all_players) + 1):
+    next_all_idx = (current_all_idx + i) % len(all_players)
+    candidate = all_players[next_all_idx]
+    if candidate["hp"] > 0:
+      st.session_state.current_actor_id = candidate["id"]
+      break
 # --- 勝利・敗北判定 ---
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
