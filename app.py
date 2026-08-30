@@ -418,8 +418,8 @@ if "initialized" not in st.session_state:
       ],
   }
   st.session_state.enemies = st.session_state.stage_enemies[st.session_state.stage]
-  st.session_state.current_actor_idx = 0  # プレイヤーのインデックス
-  st.session_state.current_enemy_idx = 0  # 敵のインデックス
+  st.session_state.current_actor_id = st.session_state.players[0]["id"]  # プレイヤーのIDで管理
+  st.session_state.current_enemy_idx = 0
   st.session_state.turn_phase = "player_turn"  # "player_turn" または "enemy_turn"
   st.session_state.battle_log = [
       f"ステージ {st.session_state.stage} 開始！味方1体が行動します。"
@@ -441,7 +441,18 @@ def update_enemy_positions():
       col4_enemy["pos"] = (r, 3)
       add_log(f"🔄 {col4_enemy['name']} が空いた3列目に前進しました！")
 
-
+def advance_to_next_player():
+  living = [p for p in st.session_state.players if p["hp"] > 0]
+  if not living:
+    return
+  # 現在のIDのインデックスを探す
+  ids = [p["id"] for p in living]
+  if st.session_state.current_actor_id in ids:
+    curr_idx = ids.index(st.session_state.current_actor_id)
+    next_idx = (curr_idx + 1) % len(living)
+  else:
+    next_idx = 0
+  st.session_state.current_actor_id = living[next_idx]["id"]
 # --- 勝利・敗北判定 ---
 living_players = [p for p in st.session_state.players if p["hp"] > 0]
 living_enemies = [e for e in st.session_state.enemies if e["hp"] > 0]
@@ -478,7 +489,7 @@ if not living_enemies:
           p["pos"] = initial_positions[i]
       # ------------------------------------------------------------------
 
-      st.session_state.current_actor_idx = 0
+      st.session_state.current_actor_id = st.session_state.players[0]["id"]  # プレイヤーのIDで管理
       st.session_state.current_enemy_idx = 0
       st.session_state.turn_phase = "player_turn"
       add_log(f"ステージ {st.session_state.stage} に突入しました！")
@@ -510,9 +521,11 @@ for e in living_enemies:
   r, c = e["pos"]
   grid_map[r][c] = ("enemy", e)
 
-current_p = living_players[
-    st.session_state.current_actor_idx % len(living_players)
-] if living_players else None
+# 現在のIDを持つ生存プレイヤーを探す。存在しない（倒された）場合は最初の生存プレイヤーにフォールバック
+current_p = next((p for p in living_players if p["id"] == st.session_state.current_actor_id), None)
+if current_p is None and living_players:
+  current_p = living_players[0]
+  st.session_state.current_actor_id = current_p["id"]
 
 for r in range(3):
   cols = st.columns(6)
@@ -580,7 +593,11 @@ if st.session_state.turn_phase == "player_turn":
     st.session_state.current_actor_idx = st.session_state.current_actor_idx % len(living_players)
   # ===============================================================
 
-  current_p = living_players[st.session_state.current_actor_idx]
+  # 現在のIDを持つ生存プレイヤーを探す。存在しない（倒された）場合は最初の生存プレイヤーにフォールバック
+  current_p = next((p for p in living_players if p["id"] == st.session_state.current_actor_id), None)
+  if current_p is None and living_players:
+    current_p = living_players[0]
+    st.session_state.current_actor_id = current_p["id"]
 
   # --- 自動パス判定：移動も攻撃も不可能な状態かチェック ---
   can_move = False
@@ -620,9 +637,7 @@ if st.session_state.turn_phase == "player_turn":
   if not can_move and not can_attack and has_surviving_adjacent_ally:
     add_log(f"💤 {current_p['name']} は移動も攻撃もできず、周囲に生存している味方がいるため、自動で待機しました。")
     st.session_state.turn_phase = "player_turn"
-    # 【修正】生存人数で割り算してインデックスを安全に更新
-    if living_players:
-      st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
+    advance_to_next_player()
     st.rerun()
   # ----------------------------------------------------
 
@@ -774,17 +789,13 @@ if st.session_state.turn_phase == "player_turn":
 
           # 1体の行動が終了したら、即座に敵のターン（フェーズ）に切り替える
           st.session_state.turn_phase = "enemy_turn"
-          # 【修正】生存人数で割り算してインデックスを安全に更新
-          if living_players:
-            st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
+          advance_to_next_player()
           st.rerun()
 
   if st.button("このキャラクターの行動をパスする"):
     add_log(f"💤 {current_p['name']} はその場で待機しました。")
     st.session_state.turn_phase = "player_turn"  # 敵のターンにせず、味方のターンのまま継続
-    # 【修正】生存人数で割り算してインデックスを安全に更新
-    if living_players:
-      st.session_state.current_actor_idx = (st.session_state.current_actor_idx + 1) % len(living_players)
+    advance_to_next_player()
     st.rerun()
 
 elif st.session_state.turn_phase == "enemy_turn":
@@ -824,9 +835,7 @@ elif st.session_state.turn_phase == "enemy_turn":
       st.session_state.current_enemy_idx += 1
       st.session_state.turn_phase = "player_turn"
       
-      # プレイヤー側に戻す際もインデックスを安全化
-      if living_players:
-        st.session_state.current_actor_idx = st.session_state.current_actor_idx % len(living_players)
+      advance_to_next_player()
         
       add_log(f"🛡️ 敵の行動終了。次の味方のターンです！")
       st.rerun()
